@@ -1,0 +1,5 @@
+{
+  "name": "Morse Fall Scale Assessment",
+  "description": "A modern medical tool for assessing patient fall risk using the Morse Fall Scale (Georgian language).",
+  "requestFramePermissions": []
+}
