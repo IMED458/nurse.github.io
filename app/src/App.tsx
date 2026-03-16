@@ -241,6 +241,31 @@ const cleanInterventionItem = (value: string) => value.replace(/^•\s*/, '');
 
 // --- Components ---
 
+const ClinicLogo = ({ compact = false }: { compact?: boolean }) => (
+  <div className={`clinic-logo ${compact ? 'clinic-logo--compact' : ''}`} aria-label="ინგოროყვას საუნივერსიტეტო კლინიკა">
+    <div className="clinic-logo__name">
+      <span>ინგოროყვას</span>
+      <span>საუნივერსიტეტო</span>
+      <span>კლინიკა</span>
+    </div>
+    <div className="clinic-logo__mark">
+      <div className="clinic-logo__wordmark">
+        <span className="clinic-logo__htmc">HTMC</span>
+        <div className="clinic-logo__building" aria-hidden="true">
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+      <div className="clinic-logo__meta">
+        <span className="clinic-logo__year">2009</span>
+        <span className="clinic-logo__center">CENTER</span>
+      </div>
+    </div>
+  </div>
+);
+
 const Dashboard = ({ setView }: { setView: (v: View) => void }) => {
   const documents = [
     { 
@@ -269,8 +294,8 @@ const Dashboard = ({ setView }: { setView: (v: View) => void }) => {
   return (
     <div className="max-w-4xl mx-auto py-12 px-6 screen-only">
       <div className="text-center mb-16">
-        <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-slate-900 text-white mb-6 shadow-lg">
-          <ClipboardList size={32} />
+        <div className="flex justify-center mb-8">
+          <ClinicLogo />
         </div>
         <h1 className="text-4xl font-black text-slate-900 uppercase tracking-tight mb-4">საექთნო დოკუმენტები</h1>
         <p className="text-slate-400 font-bold text-sm uppercase tracking-widest">Nursing Documentation Portal</p>
@@ -395,6 +420,10 @@ const MorseFallScale = ({ onBack }: { onBack: () => void }) => {
               <Printer size={14} /> ბეჭდვა
             </button>
           </div>
+        </div>
+
+        <div className="flex justify-center mb-6">
+          <ClinicLogo compact />
         </div>
         
         <h1 className="text-xl sm:text-2xl font-black text-slate-900 uppercase tracking-tight mb-2">დაცემის რისკის შეფასების მორზეს შკალა</h1>
@@ -635,6 +664,9 @@ const MorseFallScale = ({ onBack }: { onBack: () => void }) => {
       {/* Print Version */}
       <div className="print-only bg-white text-black p-0 font-sans">
         <div className="print-break-avoid border border-black p-6 mb-8 text-center">
+          <div className="flex justify-center mb-5">
+            <ClinicLogo compact />
+          </div>
           <h1 className="text-xl font-black uppercase tracking-tight">დაცემის რისკის შეფასების მორზეს შკალა</h1>
           <p className="text-xs font-bold uppercase tracking-widest mt-1">Morse Fall Scale Assessment Tool</p>
           <p className="text-[8px] mt-2 font-semibold">განახლებულია 2024 წლის 28 მაისს</p>
@@ -822,6 +854,10 @@ const BradenScale = ({ onBack }: { onBack: () => void }) => {
               <Printer size={14} /> ბეჭდვა
             </button>
           </div>
+        </div>
+
+        <div className="flex justify-center mb-6">
+          <ClinicLogo compact />
         </div>
         
         <h1 className="text-xl sm:text-2xl font-black text-slate-900 uppercase tracking-tight mb-2">ბრადენის შკალა (Braden Scale)</h1>
@@ -1041,6 +1077,9 @@ const BradenScale = ({ onBack }: { onBack: () => void }) => {
       {/* Print Version */}
       <div className="print-only bg-white text-black p-0 font-sans">
         <div className="print-break-avoid border border-black p-6 mb-8 text-center">
+          <div className="flex justify-center mb-5">
+            <ClinicLogo compact />
+          </div>
           <h1 className="text-xl font-black uppercase tracking-tight">ბრადენის შკალა (Braden Scale)</h1>
           <p className="text-xs font-bold uppercase tracking-widest mt-1">Pressure Ulcer Risk Assessment Tool</p>
         </div>
@@ -1107,8 +1146,8 @@ const BradenScale = ({ onBack }: { onBack: () => void }) => {
 
 const PlaceholderView = ({ title, onBack }: { title: string, onBack: () => void }) => (
   <div className="max-w-2xl mx-auto py-20 px-6 text-center screen-only">
-    <div className="w-20 h-20 rounded-full bg-slate-50 flex items-center justify-center text-slate-200 mx-auto mb-8">
-      <ClipboardList size={40} />
+    <div className="flex justify-center mb-8">
+      <ClinicLogo compact />
     </div>
     <h2 className="text-2xl font-black text-slate-900 mb-4">{title}</h2>
     <p className="text-slate-500 font-medium mb-10 leading-relaxed">

@@ -11,6 +11,147 @@
   }
 }
 
+.clinic-logo {
+  --clinic-blue: #14188f;
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 1rem;
+  color: var(--clinic-blue);
+  max-width: 100%;
+}
+
+.clinic-logo__name {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: flex-end;
+  font-weight: 900;
+  line-height: 0.88;
+  letter-spacing: -0.04em;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.clinic-logo__name span {
+  font-size: clamp(1.35rem, 2.8vw, 2.95rem);
+}
+
+.clinic-logo__mark {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.15rem;
+}
+
+.clinic-logo__wordmark {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  padding-right: 4rem;
+}
+
+.clinic-logo__htmc {
+  font-size: clamp(2.9rem, 8vw, 6.3rem);
+  font-weight: 900;
+  line-height: 0.82;
+  letter-spacing: -0.12em;
+  color: transparent;
+  -webkit-text-stroke: 2.5px currentColor;
+}
+
+.clinic-logo__building {
+  position: absolute;
+  top: 0.15rem;
+  right: 0;
+  display: flex;
+  align-items: flex-end;
+  gap: 0.18rem;
+  height: 78%;
+}
+
+.clinic-logo__building span {
+  width: 0.62rem;
+  background: currentColor;
+  clip-path: polygon(0 100%, 0 18%, 100% 0, 100% 82%);
+}
+
+.clinic-logo__building span:nth-child(1) { height: 2.55rem; }
+.clinic-logo__building span:nth-child(2) { height: 2.1rem; }
+.clinic-logo__building span:nth-child(3) { height: 1.72rem; }
+.clinic-logo__building span:nth-child(4) { height: 1.34rem; }
+
+.clinic-logo__meta {
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-end;
+  gap: 0.4rem;
+  width: 100%;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.clinic-logo__year {
+  font-size: clamp(0.95rem, 2vw, 1.55rem);
+  letter-spacing: -0.04em;
+}
+
+.clinic-logo__center {
+  font-size: clamp(1.15rem, 2.6vw, 2.2rem);
+  letter-spacing: 0.08em;
+}
+
+.clinic-logo--compact {
+  gap: 0.7rem;
+}
+
+.clinic-logo--compact .clinic-logo__name span {
+  font-size: clamp(1rem, 1.8vw, 1.8rem);
+}
+
+.clinic-logo--compact .clinic-logo__htmc {
+  font-size: clamp(2.35rem, 5vw, 4rem);
+  -webkit-text-stroke: 2px currentColor;
+}
+
+.clinic-logo--compact .clinic-logo__wordmark {
+  padding-right: 2.8rem;
+}
+
+.clinic-logo--compact .clinic-logo__building span {
+  width: 0.42rem;
+}
+
+.clinic-logo--compact .clinic-logo__building span:nth-child(1) { height: 1.7rem; }
+.clinic-logo--compact .clinic-logo__building span:nth-child(2) { height: 1.45rem; }
+.clinic-logo--compact .clinic-logo__building span:nth-child(3) { height: 1.18rem; }
+.clinic-logo--compact .clinic-logo__building span:nth-child(4) { height: 0.95rem; }
+
+.clinic-logo--compact .clinic-logo__year {
+  font-size: clamp(0.7rem, 1.2vw, 1rem);
+}
+
+.clinic-logo--compact .clinic-logo__center {
+  font-size: clamp(0.85rem, 1.6vw, 1.35rem);
+}
+
+@media (max-width: 640px) {
+  .clinic-logo {
+    gap: 0.6rem;
+  }
+
+  .clinic-logo__wordmark {
+    padding-right: 2.4rem;
+  }
+
+  .clinic-logo__htmc {
+    -webkit-text-stroke: 1.6px currentColor;
+  }
+
+  .clinic-logo__building span {
+    width: 0.36rem;
+  }
+}
+
 .morse-leader {
   flex: 1 1 0%;
   min-width: 2rem;
