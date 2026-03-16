@@ -259,6 +259,18 @@ const getMorseSelectionMeta = (criterion: Criterion, value: number | null) => {
 };
 
 const cleanInterventionItem = (value: string) => value.replace(/^•\s*/, '');
+const splitPatientName = (value: string) => {
+  const parts = value.trim().split(/\s+/).filter(Boolean);
+
+  if (parts.length === 0) {
+    return { firstName: '', lastName: '' };
+  }
+
+  return {
+    firstName: parts[0],
+    lastName: parts.slice(1).join(' '),
+  };
+};
 
 // --- Components ---
 
@@ -1224,23 +1236,380 @@ const BradenScale = ({
   );
 };
 
-const PlaceholderView = ({ title, onBack }: { title: string, onBack: () => void }) => (
-  <div className="max-w-2xl mx-auto py-20 px-6 text-center screen-only">
-    <div className="flex justify-end mb-4">
-      <ClinicLogo compact />
+const HandoverChecklist = ({
+  onBack,
+  patientInfo,
+}: {
+  onBack: () => void;
+  patientInfo: PatientInfo;
+}) => {
+  const { firstName, lastName } = splitPatientName(patientInfo.name);
+  const defaultDate = patientInfo.date || createInitialPatientInfo().date;
+
+  return (
+    <div className="print-sheet max-w-[210mm] mx-auto bg-white shadow-sm border border-slate-200 rounded-xl overflow-hidden print:max-w-none print:shadow-none print:border-0 print:rounded-none print:overflow-visible">
+      <div className="handover-shell">
+        <div className="handover-toolbar no-print">
+          <button
+            onClick={onBack}
+            className="inline-flex items-center gap-2 px-3 py-1.5 text-slate-400 hover:text-slate-900 hover:bg-slate-50 rounded-md transition-all font-bold text-[10px] uppercase tracking-wider"
+          >
+            <ChevronLeft size={14} /> უკან დაბრუნება
+          </button>
+          <button
+            onClick={() => window.print()}
+            className="inline-flex items-center gap-2 bg-slate-900 text-white px-4 py-1.5 rounded-md font-bold text-[10px] uppercase tracking-widest hover:bg-slate-800 transition-all shadow-sm active:scale-95"
+          >
+            <Printer size={14} /> ბეჭდვა
+          </button>
+        </div>
+
+        <div className="handover-page">
+          <div className="page">
+            <table className="header-table">
+              <tbody>
+                <tr>
+                  <td className="logo-cell" rowSpan={3}>
+                    <img src={clinicLogo} alt="ინგოროყვას საუნივერსიტეტო კლინიკა" className="handover-logo-image" />
+                  </td>
+                  <td style={{ width: '150px' }}>პაციენტის სახელი</td>
+                  <td><input type="text" defaultValue={firstName} /></td>
+                </tr>
+                <tr>
+                  <td>პაციენტის გვარი</td>
+                  <td><input type="text" defaultValue={lastName} /></td>
+                </tr>
+                <tr>
+                  <td>პაციენტის ასაკი</td>
+                  <td><input type="text" defaultValue={patientInfo.age} /></td>
+                </tr>
+                <tr>
+                  <td>დოკუმენტის №HTMC-NMS-POL-004-1</td>
+                  <td>სტაც.ისტორიის N</td>
+                  <td><input type="text" defaultValue={patientInfo.historyNum} /></td>
+                </tr>
+                <tr>
+                  <td colSpan={3} style={{ border: '1px solid #000', padding: '4px 8px', fontSize: '11px' }}>
+                    დოკუმენტი განახლდა: 01.12.2024
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div className="title-main">პაციენტის საექთნო გადაბარების ჩექლისტი</div>
+
+            <table className="main-table">
+              <tbody>
+                <tr>
+                  <th className="col-name">მაჩვენებლის დასახელება</th>
+                  <th className="col-value">ჩანაწერი</th>
+                </tr>
+                <tr><td>შევსების თარიღი</td><td><input type="date" defaultValue={defaultDate} /></td></tr>
+                <tr><td>გადაბარების მიზანი</td><td><input type="text" /></td></tr>
+
+                <tr className="sec-row"><td colSpan={2}>იდენტიფიკაცია /Identification</td></tr>
+                <tr><td>გადააბარა: ექთანი (სახელი/გვარი)</td><td><input type="text" /></td></tr>
+                <tr><td>გადაიბარა: ექთანი (სახელი/გვარი)</td><td><input type="text" /></td></tr>
+                <tr><td>დეპარტამენტი</td><td><input type="text" /></td></tr>
+                <tr><td>ჰოსპიტალიზაციის თარიღი</td><td><input type="date" /></td></tr>
+
+                <tr className="sec-row"><td colSpan={2}>მდგომარეობა /Situacion</td></tr>
+                <tr>
+                  <td>ჩატარებული ოპერაციული ჩარევა</td>
+                  <td>
+                    <div className="cr">
+                      <label><input type="radio" name="op" /> კი</label>
+                      <label><input type="radio" name="op" /> არა</label>
+                      <label><input type="radio" name="op" /> ემზადება ქირურგიული ჩარევისთვის</label>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>პაციენტის ზოგადი მდგომარეობა</td>
+                  <td>
+                    <div className="cr">
+                      <label><input type="radio" name="gen" /> მძიმე ;</label>
+                      <label><input type="radio" name="gen" /> საშუალო სიმძიმის;</label>
+                      <label><input type="radio" name="gen" /> დამაკმაყოფილებელი;</label>
+                      <label><input type="radio" name="gen" /> მზადაა გასაწერად</label>
+                    </div>
+                  </td>
+                </tr>
+
+                <tr className="sec-row"><td colSpan={2}>ანამნეზი /Background</td></tr>
+                <tr>
+                  <td>პაციენტის ძირითადი ჩივილები და სიმპტომები</td>
+                  <td>
+                    <div className="cr">
+                      <label><input type="checkbox" /> ტკივილი ჭრილობის არეში</label>
+                      <label><input type="checkbox" /> გულისრევა;</label>
+                      <label><input type="checkbox" /> ღებინება;</label>
+                      <label><input type="checkbox" /> ნაწლავთა გადაბერვა;</label>
+                      <label><input type="checkbox" /> სითხის ბალანსის დარღვევა;</label>
+                      <label><input type="checkbox" /> შეშუპება;</label>
+                      <label><input type="checkbox" /> სუნთქვასთან დაკავშირებული პრობლემები</label>
+                      <input type="text" style={{ width: '100%', marginTop: '2px' }} />
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>საექთნო დიაგნოზი</td>
+                  <td>
+                    1.&nbsp;<input className="ii" type="text" style={{ width: '27%' }} />
+                    &nbsp;2.&nbsp;<input className="ii" type="text" style={{ width: '27%' }} />
+                    &nbsp;3.&nbsp;<input className="ii" type="text" style={{ width: '27%' }} />
+                  </td>
+                </tr>
+                <tr>
+                  <td>ალერგია</td>
+                  <td>
+                    <div className="cr">
+                      <label><input type="radio" name="allergy" /> კი</label>
+                      <label><input type="radio" name="allergy" /> არა</label>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>პაციენტის ფიზიკური აქტივობისა და მდებარეობის რეჟიმი</td>
+                  <td>
+                    <div className="cr">
+                      <label><input type="radio" name="activity" /> იძულებით მწოლიარე;</label>
+                      <label><input type="radio" name="activity" /> იძულებით მჯდომარე;</label>
+                      <label><input type="radio" name="activity" /> დამხმარეს თანხლებით</label>
+                      <label><input type="radio" name="activity" /> თავისუფალი</label>
+                    </div>
+                  </td>
+                </tr>
+
+                <tr className="sec-row"><td colSpan={2}>შეფასება /Assessment</td></tr>
+                <tr><td>პულსი</td><td><input type="text" /></td></tr>
+                <tr><td>არტერიული წნევა</td><td><input type="text" /></td></tr>
+                <tr><td>სუნთქვის სიხშირე</td><td><input type="text" /></td></tr>
+                <tr><td>ტემპერატურა</td><td><input type="text" /></td></tr>
+                <tr><td>სატურაცია (SPO2)</td><td><input type="text" /></td></tr>
+                <tr>
+                  <td>ჟანგბადდამოკიდებულება</td>
+                  <td>
+                    <div className="cr">
+                      <label><input type="radio" name="o2dep" /> კი</label>
+                      <label><input type="radio" name="o2dep" /> არა</label>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>ჟანგბადის მიწოდების წესი (O2)</td>
+                  <td>
+                    <div className="cr">
+                      <label><input type="radio" name="o2" /> კი: სველი წესით</label>
+                      <input className="ii" type="text" style={{ width: '70px' }} placeholder="................" />ლ/წთ
+                      <label><input type="radio" name="o2" /> არა</label>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>ტკივილის სიმძიმე</td>
+                  <td>
+                    <div className="cr">
+                      <label><input type="radio" name="pain" /> 0-არ აღნიშნავს ;</label>
+                      <label><input type="radio" name="pain" /> 1-3 მსუბუქი ;</label>
+                      <label><input type="radio" name="pain" /> 4-6 საშუალო ტკივილი ;</label>
+                      <label><input type="radio" name="pain" /> 7-9 მწვავე ტკივილი;</label>
+                      <label><input type="radio" name="pain" /> 10 - გაუსაძლისი ტკივილი</label>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>წაქცევის რისკი</td>
+                  <td><div className="cr"><label><input type="radio" name="fall" /> კი</label><label><input type="radio" name="fall" /> არა</label></div></td>
+                </tr>
+                <tr>
+                  <td>შარდვა</td>
+                  <td><div className="cr"><label><input type="radio" name="urine" /> კი</label><label><input type="radio" name="urine" /> არა</label></div></td>
+                </tr>
+                <tr>
+                  <td>დეფეკაცია</td>
+                  <td><div className="cr"><label><input type="radio" name="defec" /> კი</label><label><input type="radio" name="defec" /> არა</label></div></td>
+                </tr>
+                <tr>
+                  <td>ნუტრიცია/დიეტა (მაგიდის №)</td>
+                  <td>
+                    <div className="cr">
+                      <label><input type="radio" name="nutri" /> პაციენტი უზმოდაა;</label>
+                      <label><input type="radio" name="nutri" /> შაქრიანი დიაბეტი;</label>
+                      შეკვეთილია კვება N<input className="ii" type="text" style={{ width: '50px' }} />
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>პაციენტი უზმოდაა</td>
+                  <td><div className="cr"><label><input type="radio" name="fasting" /> კი</label><label><input type="radio" name="fasting" /> არა</label></div></td>
+                </tr>
+                <tr>
+                  <td>კათეტერი</td>
+                  <td>
+                    <div className="cr">
+                      შ.ბ.კ-&nbsp;<label><input type="radio" name="cath1" /> კი</label>&nbsp;<label><input type="radio" name="cath1" /> არა;</label>
+                      &nbsp;პ.ვ.კ&nbsp;<label><input type="radio" name="cath2" /> კი</label>&nbsp;<label><input type="radio" name="cath2" /> არა;</label>
+                      &nbsp;ც.ვ.კ&nbsp;<label><input type="radio" name="cath3" /> კი</label>&nbsp;<label><input type="radio" name="cath3" /> არა;</label>
+                      &nbsp;ჰ.დ.კ.&nbsp;<label><input type="radio" name="cath4" /> კი</label>&nbsp;<label><input type="radio" name="cath4" /> არა</label>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>ზონდი</td>
+                  <td>
+                    <div className="cr">
+                      ნაზოგასტრალური&nbsp;<label><input type="radio" name="zond1" /> კი</label>&nbsp;<label><input type="radio" name="zond1" /> არა;</label>
+                      &nbsp;სხვა <input className="ii" type="text" style={{ width: '80px' }} />
+                      &nbsp;<label><input type="radio" name="zond2" /> კი</label>&nbsp;<label><input type="radio" name="zond2" /> არა</label>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>დრენაჟი</td>
+                  <td>
+                    <div className="cr">
+                      პერიტონიუმის-<label><input type="radio" name="drain1" /> კი</label>&nbsp;<label><input type="radio" name="drain1" /> არა;</label>
+                      &nbsp;რეტროპერიტონიუმი-<label><input type="radio" name="drain2" /> კი</label>&nbsp;<label><input type="radio" name="drain2" /> არა;</label>
+                      &nbsp;პლევრის ღრუში-<label><input type="radio" name="drain3" /> კი</label>&nbsp;<label><input type="radio" name="drain3" /> არა;</label>
+                      &nbsp;სხვა<input className="ii" type="text" style={{ width: '80px' }} />
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>ჭრილობის სტატუსი</td>
+                  <td>
+                    <div className="cr">
+                      ხორცდება პირველადად-<label><input type="radio" name="w1" /> კი</label>&nbsp;<label><input type="radio" name="w1" /> არა;</label>
+                      &nbsp;მეორადი დაჭიმვით-<label><input type="radio" name="w2" /> კი</label>&nbsp;<label><input type="radio" name="w2" /> არა;</label>
+                      &nbsp;ჰიპერემიული-<label><input type="radio" name="w3" /> კი-</label>&nbsp;<label><input type="radio" name="w3" /> არა;</label>
+                      &nbsp;ექსუდატი-<label><input type="radio" name="w4" /> კი</label>&nbsp;<label><input type="radio" name="w4" /> არა;</label>
+                      &nbsp;სხვა <input className="ii" type="text" style={{ width: '80px' }} />
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>ნაწოლები</td>
+                  <td>
+                    <div className="cr">
+                      <label><input type="radio" name="nawo" /> კი-</label> ხარისხი<input className="ii" type="text" style={{ width: '60px' }} />
+                      &nbsp;<label><input type="radio" name="nawo" /> არა</label>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>სტომები</td>
+                  <td>
+                    <div className="cr">
+                      <label><input type="radio" name="stoma" /> კი-</label>მდებარეობა<input className="ii" type="text" style={{ width: '160px' }} />
+                      &nbsp;<label><input type="radio" name="stoma" /> არა</label>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>ენდოტრაქეული მილები</td>
+                  <td><div className="cr"><label><input type="radio" name="endo" /> კი</label><label><input type="radio" name="endo" /> არა</label></div></td>
+                </tr>
+                <tr>
+                  <td>პაციენტის ჰიგიენა ჩატარებულია</td>
+                  <td><div className="cr"><label><input type="radio" name="hygiene" /> კი</label><label><input type="radio" name="hygiene" /> არა</label></div></td>
+                </tr>
+                <tr>
+                  <td>საოპერაციო არე მარკირებულია</td>
+                  <td><div className="cr"><label><input type="radio" name="opmark" /> კი</label><label><input type="radio" name="opmark" /> არა</label></div></td>
+                </tr>
+                <tr>
+                  <td>პაციენტს ანტითრომბული წინდები აცვია</td>
+                  <td><div className="cr"><label><input type="radio" name="socks" /> კი</label><label><input type="radio" name="socks" /> არა</label></div></td>
+                </tr>
+                <tr>
+                  <td>ხელოვნური კბილები/პროთეზი,დამხმარე მოწყობილობები (თვალის კონტაქტური ლინზები,სმენის აპარატი და ა,შ) ამოღებულია</td>
+                  <td><div className="cr"><label><input type="radio" name="prosth" /> კი</label><label><input type="radio" name="prosth" /> არა</label></div></td>
+                </tr>
+                <tr>
+                  <td>სამკაული, თმის სამაგრი მოხსნილია</td>
+                  <td><div className="cr"><label><input type="radio" name="jewel" /> კი</label><label><input type="radio" name="jewel" /> არა</label></div></td>
+                </tr>
+                <tr>
+                  <td>ფრჩხილის ლაქი მოხსნილია</td>
+                  <td><div className="cr"><label><input type="radio" name="nail" /> კი</label><label><input type="radio" name="nail" /> არა</label></div></td>
+                </tr>
+                <tr>
+                  <td>პაციენტს ხალათი აცვია</td>
+                  <td><div className="cr"><label><input type="radio" name="gown" /> კი</label><label><input type="radio" name="gown" /> არა</label></div></td>
+                </tr>
+                <tr>
+                  <td>ნაწლავები მომზადებულია პროცედურისათვის (Colon prepared)</td>
+                  <td><div className="cr"><label><input type="radio" name="colon" /> კი</label><label><input type="radio" name="colon" /> არა</label></div></td>
+                </tr>
+                <tr>
+                  <td>სხვა</td>
+                  <td><textarea rows={2}></textarea></td>
+                </tr>
+
+                <tr className="sec-row"><td colSpan={2}>რეკომენდაციები /Recommendations</td></tr>
+                <tr>
+                  <td>მიმდინარე ან დაგეგმილი ლაბორატორიული კვლევები</td>
+                  <td>
+                    <div className="cr">
+                      <label><input type="checkbox" /> სისხლის საერთო;</label>
+                      <label><input type="checkbox" /> სისხლის ბიოქიმიური სინჯები;</label>
+                      <label><input type="checkbox" /> კოაგულოგრამა;</label>
+                      <label><input type="checkbox" /> სისხლის იმუნოლოგიური სინჯები;</label>
+                      <label><input type="checkbox" /> შარდის საერთო;</label>
+                      <span className="cb-field"><input type="checkbox" /><input className="ii" type="text" style={{ width: '100px' }} placeholder="......................" /> ბაქტერიოლოგიური ანალიზი;</span>
+                      <span className="cb-field"><input type="checkbox" />სხვა<input className="ii" type="text" style={{ width: '100px' }} placeholder="......................" /></span>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>დაგეგმილი ინსტრუმენტული დიაგნოსტიკური კვლევები</td>
+                  <td>
+                    <div className="cr">
+                      <span className="cb-field"><input type="checkbox" /><input className="ii" type="text" style={{ width: '100px' }} placeholder="......................" /> ექოსკოპიური კვლევა ;</span>
+                      <span className="cb-field"><input type="checkbox" /><input className="ii" type="text" style={{ width: '100px' }} placeholder="......................" /> CT კვლევა;</span>
+                      <span className="cb-field"><input type="checkbox" /><input className="ii" type="text" style={{ width: '100px' }} placeholder="......................" /> MRT კვლევა;</span>
+                      <span className="cb-field"><input type="checkbox" /><input className="ii" type="text" style={{ width: '100px' }} placeholder="......................" /> რენტგენი;</span>
+                      <span className="cb-field"><input type="checkbox" />სხვა<input className="ii" type="text" style={{ width: '100px' }} placeholder="......................" /></span>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>მოვლისა და მკურნალობის გეგმა</td>
+                  <td><textarea rows={3}></textarea></td>
+                </tr>
+                <tr>
+                  <td>პაციენტის გაწერისთვის გასათვალისწინებელი საკითხები</td>
+                  <td><textarea rows={3}></textarea></td>
+                </tr>
+              </tbody>
+            </table>
+
+            <table className="sign-table">
+              <tbody>
+                <tr>
+                  <td colSpan={2} style={{ background: '#f2f2f2', fontWeight: 'bold', textAlign: 'center', padding: '6px' }}>
+                    დავადასტუროთ მიმღებ პერსონალთან ინფორმაციის სრულყოფილად გადაბარება :
+                  </td>
+                </tr>
+                <tr>
+                  <td style={{ width: '50%' }}>გადავაბარე<br /><input className="sign-line" type="text" defaultValue={patientInfo.assessor} /></td>
+                  <td style={{ width: '50%' }}>გადავიბარე<br /><input className="sign-line" type="text" /></td>
+                </tr>
+                <tr>
+                  <td>თარიღი:<br /><input className="sign-line" type="date" defaultValue={defaultDate} /></td>
+                  <td style={{ paddingBottom: '14px' }}>ხელმოწერა: ___________________________________</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <button className="print-btn" onClick={() => window.print()}>დაბეჭდვა</button>
+          </div>
+        </div>
+      </div>
     </div>
-    <h2 className="text-2xl font-black text-slate-900 mb-4">{title}</h2>
-    <p className="text-slate-500 font-medium mb-10 leading-relaxed">
-      ეს დოკუმენტი ამჟამად დამუშავების პროცესშია და მალე ხელმისაწვდომი იქნება.
-    </p>
-    <button 
-      onClick={onBack}
-      className="inline-flex items-center gap-2 px-6 py-3 bg-slate-900 text-white rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-slate-800 transition-all shadow-md active:scale-95"
-    >
-      <ChevronLeft size={16} /> უკან დაბრუნება
-    </button>
-  </div>
-);
+  );
+};
 
 export default function App() {
   const [currentView, setCurrentView] = useState<View>('dashboard');
@@ -1270,7 +1639,12 @@ export default function App() {
           setPatientInfo={setPatientInfo}
         />
       )}
-      {currentView === 'handover' && <PlaceholderView title="ექთნის გადაბარების ჩექლისთი" onBack={() => setCurrentView('dashboard')} />}
+      {currentView === 'handover' && (
+        <HandoverChecklist
+          onBack={() => setCurrentView('dashboard')}
+          patientInfo={patientInfo}
+        />
+      )}
     </div>
   );
 }

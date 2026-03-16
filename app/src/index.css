@@ -42,6 +42,209 @@
   display: none;
 }
 
+.handover-shell {
+  padding: 24px;
+}
+
+.handover-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.handover-page,
+.handover-page * {
+  box-sizing: border-box;
+}
+
+.handover-page {
+  font-family: 'Segoe UI', 'Noto Sans Georgian', Arial, sans-serif;
+  font-size: 12px;
+  background: #fff;
+  color: #000;
+}
+
+.handover-page .page {
+  max-width: 780px;
+  margin: 0 auto;
+  background: #fff;
+}
+
+.handover-page .header-table,
+.handover-page .main-table,
+.handover-page .sign-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.handover-page .header-table td {
+  border: 1px solid #000;
+  padding: 4px 8px;
+  vertical-align: middle;
+  font-size: 11px;
+}
+
+.handover-page .logo-cell {
+  width: 180px;
+  text-align: center;
+  font-size: 10px;
+  font-weight: bold;
+  line-height: 1.5;
+  padding: 4px 8px;
+}
+
+.handover-page .handover-logo-image {
+  display: block;
+  width: 100%;
+  max-width: 156px;
+  max-height: 56px;
+  margin: 0 auto;
+  object-fit: contain;
+}
+
+.handover-page .title-main {
+  text-align: center;
+  font-size: 14px;
+  font-weight: bold;
+  padding: 8px;
+  border: 1px solid #000;
+  border-top: none;
+}
+
+.handover-page .main-table td,
+.handover-page .main-table th {
+  border: 1px solid #000;
+  padding: 5px 7px;
+  vertical-align: middle;
+  font-size: 11.5px;
+}
+
+.handover-page .main-table th {
+  background: #d9d9d9;
+  font-weight: bold;
+  text-align: center;
+  font-size: 12px;
+}
+
+.handover-page .col-name {
+  width: 55%;
+}
+
+.handover-page .col-value {
+  width: 45%;
+}
+
+.handover-page .sec-row td {
+  background: #f2f2f2;
+  font-weight: bold;
+  text-align: center;
+  font-size: 12px;
+  padding: 5px;
+}
+
+.handover-page input[type="text"],
+.handover-page input[type="date"],
+.handover-page input[type="number"] {
+  border: none;
+  border-bottom: 1px solid #666;
+  outline: none;
+  font-size: 11.5px;
+  font-family: inherit;
+  background: transparent;
+  width: 100%;
+  padding: 1px 2px;
+}
+
+.handover-page textarea {
+  border: none;
+  outline: none;
+  font-size: 11.5px;
+  font-family: inherit;
+  background: transparent;
+  width: 100%;
+  resize: vertical;
+  min-height: 38px;
+  padding: 1px 2px;
+}
+
+.handover-page .cr {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  align-items: center;
+  line-height: 2;
+}
+
+.handover-page .cr label {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.handover-page .cr input[type="checkbox"],
+.handover-page .cr input[type="radio"],
+.handover-page .cb-field input[type="checkbox"] {
+  width: 13px;
+  height: 13px;
+  cursor: pointer;
+  accent-color: #000;
+  flex-shrink: 0;
+}
+
+.handover-page .cb-field {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  white-space: nowrap;
+}
+
+.handover-page .ii {
+  display: inline-block;
+  border: none;
+  border-bottom: 1px solid #666;
+  outline: none;
+  font-size: 11.5px;
+  font-family: inherit;
+  background: transparent;
+  padding: 0 2px;
+}
+
+.handover-page .sign-table td {
+  border: 1px solid #000;
+  padding: 6px 10px;
+  font-size: 11.5px;
+  vertical-align: bottom;
+}
+
+.handover-page .sign-line {
+  border: none;
+  border-bottom: 1px solid #666;
+  outline: none;
+  font-size: 11.5px;
+  font-family: inherit;
+  background: transparent;
+  width: 100%;
+  padding: 2px;
+  margin-top: 4px;
+  display: block;
+}
+
+.handover-page .print-btn {
+  display: block;
+  margin: 16px auto 0;
+  padding: 8px 28px;
+  font-size: 13px;
+  cursor: pointer;
+  background: #1a5fa8;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+}
+
 @media print {
   @page {
     size: A4 portrait;
@@ -104,5 +307,14 @@
   .clinic-logo--default,
   .clinic-logo--compact {
     max-width: 5.4rem !important;
+  }
+
+  .handover-shell {
+    padding: 0 !important;
+  }
+
+  .handover-toolbar,
+  .handover-page .print-btn {
+    display: none !important;
   }
 }
