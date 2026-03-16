@@ -1239,12 +1239,24 @@ const BradenScale = ({
 const HandoverChecklist = ({
   onBack,
   patientInfo,
+  setPatientInfo,
 }: {
   onBack: () => void;
   patientInfo: PatientInfo;
+  setPatientInfo: React.Dispatch<React.SetStateAction<PatientInfo>>;
 }) => {
   const { firstName, lastName } = splitPatientName(patientInfo.name);
   const defaultDate = patientInfo.date || createInitialPatientInfo().date;
+  const updateSharedName = (part: 'first' | 'last', value: string) => {
+    const nextFirst = part === 'first' ? value : firstName;
+    const nextLast = part === 'last' ? value : lastName;
+    const fullName = [nextFirst.trim(), nextLast.trim()].filter(Boolean).join(' ');
+
+    setPatientInfo({
+      ...patientInfo,
+      name: fullName,
+    });
+  };
 
   return (
     <div className="print-sheet max-w-[210mm] mx-auto bg-white shadow-sm border border-slate-200 rounded-xl overflow-hidden print:max-w-none print:shadow-none print:border-0 print:rounded-none print:overflow-visible">
@@ -1273,20 +1285,20 @@ const HandoverChecklist = ({
                     <img src={clinicLogo} alt="ინგოროყვას საუნივერსიტეტო კლინიკა" className="handover-logo-image" />
                   </td>
                   <td style={{ width: '150px' }}>პაციენტის სახელი</td>
-                  <td><input type="text" defaultValue={firstName} /></td>
+                  <td><input type="text" value={firstName} onChange={(e) => updateSharedName('first', e.target.value)} /></td>
                 </tr>
                 <tr>
                   <td>პაციენტის გვარი</td>
-                  <td><input type="text" defaultValue={lastName} /></td>
+                  <td><input type="text" value={lastName} onChange={(e) => updateSharedName('last', e.target.value)} /></td>
                 </tr>
                 <tr>
                   <td>პაციენტის ასაკი</td>
-                  <td><input type="text" defaultValue={patientInfo.age} /></td>
+                  <td><input type="text" value={patientInfo.age} onChange={(e) => setPatientInfo({ ...patientInfo, age: e.target.value })} /></td>
                 </tr>
                 <tr>
                   <td>დოკუმენტის №HTMC-NMS-POL-004-1</td>
                   <td>სტაც.ისტორიის N</td>
-                  <td><input type="text" defaultValue={patientInfo.historyNum} /></td>
+                  <td><input type="text" value={patientInfo.historyNum} onChange={(e) => setPatientInfo({ ...patientInfo, historyNum: e.target.value })} /></td>
                 </tr>
                 <tr>
                   <td colSpan={3} style={{ border: '1px solid #000', padding: '4px 8px', fontSize: '11px' }}>
@@ -1304,7 +1316,7 @@ const HandoverChecklist = ({
                   <th className="col-name">მაჩვენებლის დასახელება</th>
                   <th className="col-value">ჩანაწერი</th>
                 </tr>
-                <tr><td>შევსების თარიღი</td><td><input type="date" defaultValue={defaultDate} /></td></tr>
+                <tr><td>შევსების თარიღი</td><td><input type="date" value={defaultDate} onChange={(e) => setPatientInfo({ ...patientInfo, date: e.target.value })} /></td></tr>
                 <tr><td>გადაბარების მიზანი</td><td><input type="text" /></td></tr>
 
                 <tr className="sec-row"><td colSpan={2}>იდენტიფიკაცია /Identification</td></tr>
@@ -1593,11 +1605,11 @@ const HandoverChecklist = ({
                   </td>
                 </tr>
                 <tr>
-                  <td style={{ width: '50%' }}>გადავაბარე<br /><input className="sign-line" type="text" defaultValue={patientInfo.assessor} /></td>
+                  <td style={{ width: '50%' }}>გადავაბარე<br /><input className="sign-line" type="text" value={patientInfo.assessor} onChange={(e) => setPatientInfo({ ...patientInfo, assessor: e.target.value })} /></td>
                   <td style={{ width: '50%' }}>გადავიბარე<br /><input className="sign-line" type="text" /></td>
                 </tr>
                 <tr>
-                  <td>თარიღი:<br /><input className="sign-line" type="date" defaultValue={defaultDate} /></td>
+                  <td>თარიღი:<br /><input className="sign-line" type="date" value={defaultDate} onChange={(e) => setPatientInfo({ ...patientInfo, date: e.target.value })} /></td>
                   <td style={{ paddingBottom: '14px' }}>ხელმოწერა: ___________________________________</td>
                 </tr>
               </tbody>
@@ -1643,6 +1655,7 @@ export default function App() {
         <HandoverChecklist
           onBack={() => setCurrentView('dashboard')}
           patientInfo={patientInfo}
+          setPatientInfo={setPatientInfo}
         />
       )}
     </div>
