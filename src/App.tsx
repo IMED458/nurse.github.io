@@ -210,6 +210,15 @@ const BRADEN_INTERVENTIONS = {
   ]
 };
 
+const formatDisplayDate = (value: string) => {
+  if (!value) return '________________';
+
+  const parsed = new Date(`${value}T00:00:00`);
+  if (Number.isNaN(parsed.getTime())) return value;
+
+  return parsed.toLocaleDateString('ka-GE');
+};
+
 // --- Components ---
 
 const Dashboard = ({ setView }: { setView: (v: View) => void }) => {
@@ -238,7 +247,7 @@ const Dashboard = ({ setView }: { setView: (v: View) => void }) => {
   ];
 
   return (
-    <div className="max-w-4xl mx-auto py-12 px-6">
+    <div className="max-w-4xl mx-auto py-12 px-6 screen-only">
       <div className="text-center mb-16">
         <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-slate-900 text-white mb-6 shadow-lg">
           <ClipboardList size={32} />
@@ -341,9 +350,10 @@ const MorseFallScale = ({ onBack }: { onBack: () => void }) => {
   };
 
   return (
-    <div className="max-w-[210mm] mx-auto bg-white shadow-sm border border-slate-200 rounded-xl overflow-hidden">
-      {/* Header Section */}
-      <div className="bg-white border-b border-slate-100 p-8 sm:p-10 text-center">
+    <div className="print-sheet max-w-[210mm] mx-auto bg-white shadow-sm border border-slate-200 rounded-xl overflow-hidden print:max-w-none print:shadow-none print:border-0 print:rounded-none print:overflow-visible">
+      <div className="screen-only">
+        {/* Header Section */}
+        <div className="bg-white border-b border-slate-100 p-8 sm:p-10 text-center">
         <div className="flex justify-between items-start mb-6 no-print">
           <button 
             onClick={onBack}
@@ -372,9 +382,9 @@ const MorseFallScale = ({ onBack }: { onBack: () => void }) => {
         <div className="mt-4 inline-block px-3 py-1 bg-slate-50 rounded-full border border-slate-100">
           <p className="text-[9px] text-slate-500 font-bold uppercase tracking-widest">განახლებულია 2024 წლის 28 მაისს</p>
         </div>
-      </div>
+        </div>
 
-      <div className="p-8 sm:p-12">
+        <div className="p-8 sm:p-12">
         {/* Patient Info Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-12 gap-x-10 gap-y-8 mb-16">
           <div className="sm:col-span-8 group">
@@ -579,71 +589,76 @@ const MorseFallScale = ({ onBack }: { onBack: () => void }) => {
             </div>
             <div className="flex flex-col gap-1">
               <span className="opacity-50">თარიღი</span>
-              <span className="text-slate-900">{new Date().toLocaleDateString('ka-GE')}</span>
+              <span className="text-slate-900">{formatDisplayDate(patientInfo.date)}</span>
             </div>
           </div>
         </div>
       </div>
+      </div>
 
       {/* Print Version */}
-      <div className="hidden print:block bg-white text-black p-0 font-sans">
-        <div className="border border-black p-6 mb-8 text-center">
+      <div className="print-only bg-white text-black p-0 font-sans">
+        <div className="print-break-avoid border border-black p-6 mb-8 text-center">
           <h1 className="text-xl font-black uppercase tracking-tight">დაცემის რისკის შეფასების მორზეს შკალა</h1>
           <p className="text-xs font-bold uppercase tracking-widest mt-1">Morse Fall Scale Assessment Tool</p>
-          <p className="text-[8px] mt-2 opacity-50">განახლებულია 2024 წლის 28 მაისს</p>
+          <p className="text-[8px] mt-2 font-semibold">განახლებულია 2024 წლის 28 მაისს</p>
         </div>
 
-        <div className="grid grid-cols-2 gap-x-12 gap-y-4 mb-10 text-[10px]">
-          <div className="border-b border-black/10 pb-1 flex justify-between"><span>პაციენტი:</span> <span className="font-bold">{patientInfo.name || '________________'}</span></div>
-          <div className="border-b border-black/10 pb-1 flex justify-between"><span>ასაკი:</span> <span className="font-bold">{patientInfo.age || '____'} წელი</span></div>
-          <div className="border-b border-black/10 pb-1 flex justify-between"><span>პირადი №:</span> <span className="font-bold">{patientInfo.id || '________________'}</span></div>
-          <div className="border-b border-black/10 pb-1 flex justify-between"><span>ისტორია №:</span> <span className="font-bold">{patientInfo.historyNum || '________________'}</span></div>
-          <div className="border-b border-black/10 pb-1 flex justify-between"><span>სქესი:</span> <span className="font-bold">{patientInfo.gender || '____'}</span></div>
-          <div className="border-b border-black/10 pb-1 flex justify-between"><span>თარიღი:</span> <span className="font-bold">{patientInfo.date || '________________'}</span></div>
+        <div className="print-break-avoid grid grid-cols-2 gap-x-12 gap-y-4 mb-10 text-[10px]">
+          <div className="border-b border-black pb-1 flex justify-between"><span>პაციენტი:</span> <span className="font-bold">{patientInfo.name || '________________'}</span></div>
+          <div className="border-b border-black pb-1 flex justify-between"><span>ასაკი:</span> <span className="font-bold">{patientInfo.age || '____'} წელი</span></div>
+          <div className="border-b border-black pb-1 flex justify-between"><span>პირადი №:</span> <span className="font-bold">{patientInfo.id || '________________'}</span></div>
+          <div className="border-b border-black pb-1 flex justify-between"><span>ისტორია №:</span> <span className="font-bold">{patientInfo.historyNum || '________________'}</span></div>
+          <div className="border-b border-black pb-1 flex justify-between"><span>სქესი:</span> <span className="font-bold">{patientInfo.gender || '____'}</span></div>
+          <div className="border-b border-black pb-1 flex justify-between"><span>თარიღი:</span> <span className="font-bold">{formatDisplayDate(patientInfo.date)}</span></div>
         </div>
 
         <table className="w-full border-collapse border border-black text-[10px] mb-10">
           <thead>
-            <tr className="bg-gray-50">
+            <tr className="print-break-avoid">
               <th className="border border-black p-3 text-left uppercase tracking-widest">შეფასების კრიტერიუმი</th>
               <th className="border border-black p-3 text-center w-20 uppercase tracking-widest">ქულა</th>
             </tr>
           </thead>
           <tbody>
             {MORSE_CRITERIA.map(c => (
-              <tr key={c.id}>
+              <tr key={c.id} className="print-break-avoid">
                 <td className="border border-black p-3">
                   <p className="font-bold mb-1">{c.label}</p>
-                  <p className="text-[9px] italic opacity-60">არჩეული: {c.options.find(o => o.value === scores[c.id])?.label || '—'}</p>
+                  <p className="text-[9px] italic font-medium">არჩეული: {c.options.find(o => o.value === scores[c.id])?.label || '—'}</p>
                 </td>
                 <td className="border border-black p-3 text-center font-bold text-sm">{scores[c.id] ?? '—'}</td>
               </tr>
             ))}
-            <tr className="bg-gray-50 font-black">
+            <tr className="font-black print-break-avoid">
               <td className="border border-black p-3 text-right uppercase tracking-widest">საბოლოო ქულა:</td>
               <td className="border border-black p-3 text-center text-base">{totalScore}</td>
             </tr>
           </tbody>
         </table>
 
-        <div className="border border-black p-6 mb-10">
-          <div className="flex justify-between items-center mb-4 border-b border-black/10 pb-2">
+        <div className="print-break-avoid border border-black p-6 mb-10">
+          <div className="flex justify-between items-center mb-4 border-b border-black pb-2">
             <p className="text-[10px] font-black uppercase tracking-widest">რისკის დონე: {getRiskLabel()}</p>
             <p className="text-[10px] font-black uppercase tracking-widest">ინტერვენცია: {getInterventionType()}</p>
           </div>
-          <div className="space-y-2">
-            {MORSE_INTERVENTIONS[riskLevel === 'none' ? 'low' : riskLevel].map((item, i) => (
-              <p key={i} className="text-[9px] leading-snug">• {item}</p>
-            ))}
-          </div>
+          {isComplete ? (
+            <div className="space-y-2">
+              {MORSE_INTERVENTIONS[riskLevel].map((item, i) => (
+                <p key={i} className="text-[9px] leading-snug font-medium">• {item}</p>
+              ))}
+            </div>
+          ) : (
+            <p className="text-[9px] leading-snug font-medium">გთხოვთ შეავსოთ ყველა პუნქტი რეკომენდაციების სანახავად.</p>
+          )}
         </div>
 
-        <div className="flex justify-between mt-20 text-[10px] font-bold uppercase tracking-widest">
+        <div className="print-break-avoid flex justify-between mt-20 text-[10px] font-bold uppercase tracking-widest">
           <div className="flex flex-col gap-2">
             <span>შემფასებელი: ________________________</span>
-            <span className="text-[8px] opacity-50 font-normal">{patientInfo.assessor}</span>
+            <span className="text-[8px] font-medium normal-case tracking-normal">{patientInfo.assessor || '________________'}</span>
           </div>
-          <p>თარიღი: {new Date().toLocaleDateString('ka-GE')}</p>
+          <p>თარიღი: {formatDisplayDate(patientInfo.date)}</p>
         </div>
       </div>
     </div>
@@ -711,9 +726,10 @@ const BradenScale = ({ onBack }: { onBack: () => void }) => {
   };
 
   return (
-    <div className="max-w-[210mm] mx-auto bg-white shadow-sm border border-slate-200 rounded-xl overflow-hidden">
-      {/* Header Section */}
-      <div className="bg-white border-b border-slate-100 p-8 sm:p-10 text-center">
+    <div className="print-sheet max-w-[210mm] mx-auto bg-white shadow-sm border border-slate-200 rounded-xl overflow-hidden print:max-w-none print:shadow-none print:border-0 print:rounded-none print:overflow-visible">
+      <div className="screen-only">
+        {/* Header Section */}
+        <div className="bg-white border-b border-slate-100 p-8 sm:p-10 text-center">
         <div className="flex justify-between items-start mb-6 no-print">
           <button 
             onClick={onBack}
@@ -742,9 +758,9 @@ const BradenScale = ({ onBack }: { onBack: () => void }) => {
         <div className="mt-4 inline-block px-3 py-1 bg-slate-50 rounded-full border border-slate-100">
           <p className="text-[9px] text-slate-500 font-bold uppercase tracking-widest">ნაწოლების განვითარების რისკის შეფასება</p>
         </div>
-      </div>
+        </div>
 
-      <div className="p-8 sm:p-12">
+        <div className="p-8 sm:p-12">
         {/* Patient Info Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-12 gap-x-10 gap-y-8 mb-16">
           <div className="sm:col-span-8 group">
@@ -944,69 +960,74 @@ const BradenScale = ({ onBack }: { onBack: () => void }) => {
             </div>
             <div className="flex flex-col gap-1">
               <span className="opacity-50">თარიღი</span>
-              <span className="text-slate-900">{new Date().toLocaleDateString('ka-GE')}</span>
+              <span className="text-slate-900">{formatDisplayDate(patientInfo.date)}</span>
             </div>
           </div>
         </div>
       </div>
+      </div>
 
       {/* Print Version */}
-      <div className="hidden print:block bg-white text-black p-0 font-sans">
-        <div className="border border-black p-6 mb-8 text-center">
+      <div className="print-only bg-white text-black p-0 font-sans">
+        <div className="print-break-avoid border border-black p-6 mb-8 text-center">
           <h1 className="text-xl font-black uppercase tracking-tight">ბრადენის შკალა (Braden Scale)</h1>
           <p className="text-xs font-bold uppercase tracking-widest mt-1">Pressure Ulcer Risk Assessment Tool</p>
         </div>
 
-        <div className="grid grid-cols-2 gap-x-12 gap-y-4 mb-10 text-[10px]">
-          <div className="border-b border-black/10 pb-1 flex justify-between"><span>პაციენტი:</span> <span className="font-bold">{patientInfo.name || '________________'}</span></div>
-          <div className="border-b border-black/10 pb-1 flex justify-between"><span>ასაკი:</span> <span className="font-bold">{patientInfo.age || '____'} წელი</span></div>
-          <div className="border-b border-black/10 pb-1 flex justify-between"><span>პირადი №:</span> <span className="font-bold">{patientInfo.id || '________________'}</span></div>
-          <div className="border-b border-black/10 pb-1 flex justify-between"><span>ისტორია №:</span> <span className="font-bold">{patientInfo.historyNum || '________________'}</span></div>
-          <div className="border-b border-black/10 pb-1 flex justify-between"><span>სქესი:</span> <span className="font-bold">{patientInfo.gender || '____'}</span></div>
-          <div className="border-b border-black/10 pb-1 flex justify-between"><span>თარიღი:</span> <span className="font-bold">{patientInfo.date || '________________'}</span></div>
+        <div className="print-break-avoid grid grid-cols-2 gap-x-12 gap-y-4 mb-10 text-[10px]">
+          <div className="border-b border-black pb-1 flex justify-between"><span>პაციენტი:</span> <span className="font-bold">{patientInfo.name || '________________'}</span></div>
+          <div className="border-b border-black pb-1 flex justify-between"><span>ასაკი:</span> <span className="font-bold">{patientInfo.age || '____'} წელი</span></div>
+          <div className="border-b border-black pb-1 flex justify-between"><span>პირადი №:</span> <span className="font-bold">{patientInfo.id || '________________'}</span></div>
+          <div className="border-b border-black pb-1 flex justify-between"><span>ისტორია №:</span> <span className="font-bold">{patientInfo.historyNum || '________________'}</span></div>
+          <div className="border-b border-black pb-1 flex justify-between"><span>სქესი:</span> <span className="font-bold">{patientInfo.gender || '____'}</span></div>
+          <div className="border-b border-black pb-1 flex justify-between"><span>თარიღი:</span> <span className="font-bold">{formatDisplayDate(patientInfo.date)}</span></div>
         </div>
 
         <table className="w-full border-collapse border border-black text-[10px] mb-10">
           <thead>
-            <tr className="bg-gray-50">
+            <tr className="print-break-avoid">
               <th className="border border-black p-3 text-left uppercase tracking-widest">შეფასების კრიტერიუმი</th>
               <th className="border border-black p-3 text-center w-20 uppercase tracking-widest">ქულა</th>
             </tr>
           </thead>
           <tbody>
             {BRADEN_CRITERIA.map(c => (
-              <tr key={c.id}>
+              <tr key={c.id} className="print-break-avoid">
                 <td className="border border-black p-3">
                   <p className="font-bold mb-1">{c.label}</p>
-                  <p className="text-[9px] italic opacity-60">არჩეული: {c.options.find(o => o.value === scores[c.id])?.label || '—'}</p>
+                  <p className="text-[9px] italic font-medium">არჩეული: {c.options.find(o => o.value === scores[c.id])?.label || '—'}</p>
                 </td>
                 <td className="border border-black p-3 text-center font-bold text-sm">{scores[c.id] ?? '—'}</td>
               </tr>
             ))}
-            <tr className="bg-gray-50 font-black">
+            <tr className="font-black print-break-avoid">
               <td className="border border-black p-3 text-right uppercase tracking-widest">საბოლოო ქულა:</td>
               <td className="border border-black p-3 text-center text-base">{totalScore}</td>
             </tr>
           </tbody>
         </table>
 
-        <div className="border border-black p-6 mb-10">
-          <div className="flex justify-between items-center mb-4 border-b border-black/10 pb-2">
+        <div className="print-break-avoid border border-black p-6 mb-10">
+          <div className="flex justify-between items-center mb-4 border-b border-black pb-2">
             <p className="text-[10px] font-black uppercase tracking-widest">რისკის დონე: {getRiskLabel()}</p>
           </div>
-          <div className="space-y-2">
-            {BRADEN_INTERVENTIONS[riskLevel as keyof typeof BRADEN_INTERVENTIONS]?.map((item, i) => (
-              <p key={i} className="text-[9px] leading-snug">• {item}</p>
-            ))}
-          </div>
+          {isComplete ? (
+            <div className="space-y-2">
+              {BRADEN_INTERVENTIONS[riskLevel as keyof typeof BRADEN_INTERVENTIONS]?.map((item, i) => (
+                <p key={i} className="text-[9px] leading-snug font-medium">• {item}</p>
+              ))}
+            </div>
+          ) : (
+            <p className="text-[9px] leading-snug font-medium">გთხოვთ შეავსოთ ყველა პუნქტი რეკომენდაციების სანახავად.</p>
+          )}
         </div>
 
-        <div className="flex justify-between mt-20 text-[10px] font-bold uppercase tracking-widest">
+        <div className="print-break-avoid flex justify-between mt-20 text-[10px] font-bold uppercase tracking-widest">
           <div className="flex flex-col gap-2">
             <span>შემფასებელი: ________________________</span>
-            <span className="text-[8px] opacity-50 font-normal">{patientInfo.assessor}</span>
+            <span className="text-[8px] font-medium normal-case tracking-normal">{patientInfo.assessor || '________________'}</span>
           </div>
-          <p>თარიღი: {new Date().toLocaleDateString('ka-GE')}</p>
+          <p>თარიღი: {formatDisplayDate(patientInfo.date)}</p>
         </div>
       </div>
     </div>
@@ -1014,7 +1035,7 @@ const BradenScale = ({ onBack }: { onBack: () => void }) => {
 };
 
 const PlaceholderView = ({ title, onBack }: { title: string, onBack: () => void }) => (
-  <div className="max-w-2xl mx-auto py-20 px-6 text-center">
+  <div className="max-w-2xl mx-auto py-20 px-6 text-center screen-only">
     <div className="w-20 h-20 rounded-full bg-slate-50 flex items-center justify-center text-slate-200 mx-auto mb-8">
       <ClipboardList size={40} />
     </div>
@@ -1035,7 +1056,7 @@ export default function App() {
   const [currentView, setCurrentView] = useState<View>('dashboard');
 
   return (
-    <div className="min-h-screen bg-slate-50 py-8 sm:py-12 px-4 no-print font-sans">
+    <div className="min-h-screen bg-slate-50 py-8 sm:py-12 px-4 font-sans print:bg-white print:py-0 print:px-0">
       {currentView === 'dashboard' && <Dashboard setView={setCurrentView} />}
       {currentView === 'morse' && <MorseFallScale onBack={() => setCurrentView('dashboard')} />}
       {currentView === 'braden' && <BradenScale onBack={() => setCurrentView('dashboard')} />}

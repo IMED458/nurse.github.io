@@ -11,14 +11,66 @@
   }
 }
 
+.print-only {
+  display: none;
+}
+
 @media print {
+  @page {
+    size: A4 portrait;
+    margin: 10mm;
+  }
+
+  html,
+  body {
+    margin: 0;
+    background: white !important;
+  }
+
+  body {
+    color: black !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
   .no-print {
     display: none !important;
   }
+
+  .screen-only {
+    display: none !important;
+  }
+
   .print-only {
     display: block !important;
   }
-  body {
+
+  .print-sheet {
+    width: 100%;
+    max-width: 190mm;
+    min-height: 277mm;
+    margin: 0 auto;
+    color: black !important;
     background: white !important;
+    box-shadow: none !important;
+  }
+
+  .print-sheet,
+  .print-sheet * {
+    color: black !important;
+    border-color: black !important;
+    text-shadow: none !important;
+    box-shadow: none !important;
+  }
+
+  .print-break-avoid {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  input,
+  textarea,
+  select {
+    color: black !important;
   }
 }
