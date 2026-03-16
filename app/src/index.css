@@ -11,6 +11,17 @@
   }
 }
 
+.morse-leader {
+  flex: 1 1 0%;
+  min-width: 2rem;
+  height: 2px;
+  align-self: center;
+  background-image: radial-gradient(circle, currentColor 1px, transparent 1.2px);
+  background-position: left center;
+  background-repeat: repeat-x;
+  background-size: 6px 2px;
+}
+
 .print-only {
   display: none;
 }

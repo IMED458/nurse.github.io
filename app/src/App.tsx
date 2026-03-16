@@ -219,6 +219,59 @@ const formatDisplayDate = (value: string) => {
   return parsed.toLocaleDateString('ka-GE');
 };
 
+const MORSE_SELECTION_LABELS: Record<string, Record<number, { screen: string; print: string }>> = {
+  falls: {
+    0: { screen: 'არა', print: 'არა' },
+    25: { screen: 'კი', print: 'კი' },
+  },
+  como: {
+    0: { screen: 'არა', print: 'არა' },
+    15: { screen: 'კი', print: 'კი' },
+  },
+  mob: {
+    0: { screen: 'დახმარება / წოლითი რეჟიმი', print: 'დახმარება / წოლითი' },
+    15: { screen: 'ხელჯოხი / ყავარჯენი', print: 'ხელჯოხი / ყავარჯენი' },
+    30: { screen: 'ავეჯს ეყრდნობა', print: 'ავეჯზე დაყრდნობით' },
+  },
+  iv: {
+    0: { screen: 'არა', print: 'არა' },
+    20: { screen: 'კი', print: 'კი' },
+  },
+  gait: {
+    0: { screen: 'ნორმალური', print: 'ნორმალური' },
+    10: { screen: 'სუსტი სიარული', print: 'სუსტი სიარული' },
+    20: { screen: 'მხარდაჭერით დადის', print: 'მხარდაჭერით დადის' },
+  },
+  mental: {
+    0: { screen: 'აცნობიერებს', print: 'აცნობიერებს' },
+    15: { screen: 'რისკს ვერ აფასებს', print: 'რისკს ვერ აფასებს' },
+  },
+};
+
+const getMorseSelectionMeta = (criterion: Criterion, value: number | null) => {
+  const option = criterion.options.find((entry) => entry.value === value);
+
+  if (value === null || !option) {
+    return {
+      screen: 'აირჩიეთ პასუხი',
+      print: ' ',
+      full: '',
+      score: '—',
+    };
+  }
+
+  const mapped = MORSE_SELECTION_LABELS[criterion.id]?.[value];
+
+  return {
+    screen: mapped?.screen ?? option.label,
+    print: mapped?.print ?? mapped?.screen ?? option.label,
+    full: option.label,
+    score: String(value),
+  };
+};
+
+const cleanInterventionItem = (value: string) => value.replace(/^•\s*/, '');
+
 // --- Components ---
 
 const Dashboard = ({ setView }: { setView: (v: View) => void }) => {
@@ -469,64 +522,78 @@ const MorseFallScale = ({ onBack }: { onBack: () => void }) => {
         </div>
 
         {/* Criteria Section */}
-        <div className="space-y-10 mb-16">
+        <div className="space-y-6 mb-16">
           <div className="flex items-center gap-4 mb-6">
             <h2 className="text-[10px] font-black text-slate-900 uppercase tracking-[0.2em]">შეფასების კრიტერიუმები</h2>
             <div className="h-[1px] flex-1 bg-slate-100"></div>
           </div>
 
-          {MORSE_CRITERIA.map((criterion, cIdx) => (
-            <div key={criterion.id} className="group">
-              <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-6">
-                <div className="flex-1">
-                  <div className="flex items-start gap-3 mb-4">
-                    <span className="text-xs font-black text-slate-300 mt-0.5">{String(cIdx + 1).padStart(2, '0')}</span>
-                    <p className="text-sm font-bold text-slate-800 leading-snug">{criterion.label}</p>
+          {MORSE_CRITERIA.map((criterion, cIdx) => {
+            const selected = getMorseSelectionMeta(criterion, scores[criterion.id]);
+
+            return (
+              <div key={criterion.id} className="group rounded-[1.75rem] border border-slate-200 bg-gradient-to-r from-white via-white to-slate-50/70 p-5 shadow-sm">
+                <div className="space-y-4">
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-start">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-slate-900 text-[11px] font-black text-white shadow-sm">
+                      {String(cIdx + 1).padStart(2, '0')}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+                        <p className="text-sm font-black text-slate-900 leading-snug sm:max-w-[62%]">{criterion.label}</p>
+                        <div className="morse-leader hidden sm:block text-slate-200"></div>
+                        <div className="flex flex-wrap items-center gap-2 sm:ml-auto">
+                          <span className={`inline-flex items-center rounded-full border px-3 py-1.5 text-[10px] font-black tracking-wide ${
+                            scores[criterion.id] !== null
+                              ? 'border-slate-900 bg-slate-900 text-white'
+                              : 'border-slate-200 bg-white text-slate-400'
+                          }`}>
+                            {selected.screen}
+                          </span>
+                          <span className={`inline-flex min-w-[48px] items-center justify-center rounded-xl border px-3 py-1.5 text-[10px] font-black ${
+                            scores[criterion.id] !== null
+                              ? 'border-slate-900 bg-slate-50 text-slate-900'
+                              : 'border-slate-200 bg-white text-slate-300'
+                          }`}>
+                            {selected.score}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                  
-                  <div className="grid grid-cols-1 gap-1.5 pl-7">
-                    {criterion.options.map((opt, idx) => (
-                      <React.Fragment key={opt.value}>
-                        {(criterion.id === 'mob' && idx === 2) || (criterion.id === 'gait' && idx === 2) ? (
-                          <div className="flex items-center gap-2 my-0.5">
-                            <span className="text-[8px] font-black text-slate-300 uppercase tracking-widest ml-2">ან</span>
-                            <div className="h-[1px] flex-1 bg-slate-50"></div>
-                          </div>
-                        ) : null}
+
+                  <div className="pl-0 sm:pl-12">
+                    <div className={`grid grid-cols-1 gap-2 ${criterion.options.length === 2 ? 'md:grid-cols-2' : 'xl:grid-cols-3'}`}>
+                      {criterion.options.map((opt) => (
                         <button
+                          key={opt.value}
                           onClick={() => setScores({...scores, [criterion.id]: opt.value})}
-                          className={`w-full text-left px-4 py-2.5 rounded-lg border transition-all flex justify-between items-center group/btn ${
-                            scores[criterion.id] === opt.value 
-                            ? 'bg-slate-900 border-slate-900 text-white shadow-sm' 
-                            : 'bg-white border-slate-100 text-slate-500 hover:border-slate-200 hover:bg-slate-50'
+                          className={`w-full rounded-2xl border px-4 py-3 text-left transition-all ${
+                            scores[criterion.id] === opt.value
+                              ? 'border-slate-900 bg-slate-900 text-white shadow-sm'
+                              : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50'
                           }`}
                         >
-                          <span className="text-[11px] font-bold">
-                            {opt.label}
-                          </span>
-                          <span className={`ml-4 text-[10px] font-black ${
-                            scores[criterion.id] === opt.value ? 'text-white/60' : 'text-slate-300'
-                          }`}>
-                            {opt.value}
-                          </span>
+                          <div className="flex items-start justify-between gap-3">
+                            <span className="text-[11px] font-bold leading-snug">
+                              {opt.label}
+                            </span>
+                            <span className={`rounded-full px-2.5 py-1 text-[10px] font-black ${
+                              scores[criterion.id] === opt.value
+                                ? 'bg-white/15 text-white'
+                                : 'bg-slate-100 text-slate-500'
+                            }`}>
+                              {opt.value}
+                            </span>
+                          </div>
                         </button>
-                      </React.Fragment>
-                    ))}
-                  </div>
-                </div>
-                <div className="sm:w-20 flex flex-col items-center justify-center no-print pt-8 sm:pt-0">
-                  <div className="text-[8px] font-black text-slate-300 uppercase tracking-widest mb-1">ქულა</div>
-                  <div className={`w-12 h-10 rounded-lg border flex items-center justify-center text-sm font-black transition-all ${
-                    scores[criterion.id] !== null 
-                    ? 'bg-slate-50 border-slate-200 text-slate-900' 
-                    : 'bg-white border-slate-50 text-slate-100'
-                  }`}>
-                    {scores[criterion.id] !== null ? scores[criterion.id] : '—'}
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         {/* Results Summary */}
@@ -560,7 +627,7 @@ const MorseFallScale = ({ onBack }: { onBack: () => void }) => {
                       <div key={i} className="flex gap-3 items-start">
                         <div className="w-1 h-1 rounded-full bg-slate-300 mt-1.5 shrink-0"></div>
                         <p className="text-[11px] leading-relaxed text-slate-600 font-medium">
-                          {item}
+                          {cleanInterventionItem(item)}
                         </p>
                       </div>
                     ))}
@@ -604,48 +671,87 @@ const MorseFallScale = ({ onBack }: { onBack: () => void }) => {
           <p className="text-[8px] mt-2 font-semibold">განახლებულია 2024 წლის 28 მაისს</p>
         </div>
 
-        <div className="print-break-avoid grid grid-cols-2 gap-x-12 gap-y-4 mb-10 text-[10px]">
-          <div className="border-b border-black pb-1 flex justify-between"><span>პაციენტი:</span> <span className="font-bold">{patientInfo.name || '________________'}</span></div>
-          <div className="border-b border-black pb-1 flex justify-between"><span>ასაკი:</span> <span className="font-bold">{patientInfo.age || '____'} წელი</span></div>
-          <div className="border-b border-black pb-1 flex justify-between"><span>პირადი №:</span> <span className="font-bold">{patientInfo.id || '________________'}</span></div>
-          <div className="border-b border-black pb-1 flex justify-between"><span>ისტორია №:</span> <span className="font-bold">{patientInfo.historyNum || '________________'}</span></div>
-          <div className="border-b border-black pb-1 flex justify-between"><span>სქესი:</span> <span className="font-bold">{patientInfo.gender || '____'}</span></div>
-          <div className="border-b border-black pb-1 flex justify-between"><span>თარიღი:</span> <span className="font-bold">{formatDisplayDate(patientInfo.date)}</span></div>
+        <div className="print-break-avoid grid grid-cols-2 gap-3 mb-8">
+          <div className="border border-black px-3 py-2">
+            <p className="text-[8px] font-black uppercase tracking-widest mb-1">პაციენტი</p>
+            <p className="text-[10px] font-semibold">{patientInfo.name || '________________'}</p>
+          </div>
+          <div className="border border-black px-3 py-2">
+            <p className="text-[8px] font-black uppercase tracking-widest mb-1">ასაკი</p>
+            <p className="text-[10px] font-semibold">{patientInfo.age || '____'} წელი</p>
+          </div>
+          <div className="border border-black px-3 py-2">
+            <p className="text-[8px] font-black uppercase tracking-widest mb-1">პირადი №</p>
+            <p className="text-[10px] font-semibold">{patientInfo.id || '________________'}</p>
+          </div>
+          <div className="border border-black px-3 py-2">
+            <p className="text-[8px] font-black uppercase tracking-widest mb-1">ისტორია №</p>
+            <p className="text-[10px] font-semibold">{patientInfo.historyNum || '________________'}</p>
+          </div>
+          <div className="border border-black px-3 py-2">
+            <p className="text-[8px] font-black uppercase tracking-widest mb-1">სქესი</p>
+            <p className="text-[10px] font-semibold">{patientInfo.gender || '____'}</p>
+          </div>
+          <div className="border border-black px-3 py-2">
+            <p className="text-[8px] font-black uppercase tracking-widest mb-1">თარიღი</p>
+            <p className="text-[10px] font-semibold">{formatDisplayDate(patientInfo.date)}</p>
+          </div>
         </div>
 
-        <table className="w-full border-collapse border border-black text-[10px] mb-10">
-          <thead>
-            <tr className="print-break-avoid">
-              <th className="border border-black p-3 text-left uppercase tracking-widest">შეფასების კრიტერიუმი</th>
-              <th className="border border-black p-3 text-center w-20 uppercase tracking-widest">ქულა</th>
-            </tr>
-          </thead>
-          <tbody>
-            {MORSE_CRITERIA.map(c => (
-              <tr key={c.id} className="print-break-avoid">
-                <td className="border border-black p-3">
-                  <p className="font-bold mb-1">{c.label}</p>
-                  <p className="text-[9px] italic font-medium">არჩეული: {c.options.find(o => o.value === scores[c.id])?.label || '—'}</p>
-                </td>
-                <td className="border border-black p-3 text-center font-bold text-sm">{scores[c.id] ?? '—'}</td>
-              </tr>
-            ))}
-            <tr className="font-black print-break-avoid">
-              <td className="border border-black p-3 text-right uppercase tracking-widest">საბოლოო ქულა:</td>
-              <td className="border border-black p-3 text-center text-base">{totalScore}</td>
-            </tr>
-          </tbody>
-        </table>
+        <div className="print-break-avoid border border-black p-5 mb-8">
+          <div className="flex items-center gap-3 mb-5">
+            <p className="text-[10px] font-black uppercase tracking-[0.18em]">შეფასების კრიტერიუმები</p>
+            <div className="morse-leader text-black/60"></div>
+          </div>
+
+          <div className="space-y-3">
+            {MORSE_CRITERIA.map((criterion, index) => {
+              const selected = getMorseSelectionMeta(criterion, scores[criterion.id]);
+
+              return (
+                <div key={criterion.id} className="print-break-avoid rounded-lg border border-black px-3 py-3">
+                  <div className="flex items-start gap-3">
+                    <div className="flex h-6 w-6 items-center justify-center rounded-full border border-black text-[8px] font-black">
+                      {String(index + 1).padStart(2, '0')}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2">
+                        <p className="text-[10px] font-semibold leading-snug">{criterion.label}</p>
+                        <div className="morse-leader text-black/60"></div>
+                        <span className="inline-flex min-w-[38mm] justify-center rounded-full border border-black px-3 py-1 text-[8px] font-black tracking-wider">
+                          {selected.print}
+                        </span>
+                        <span className="inline-flex w-[14mm] justify-center rounded-md border border-black px-2 py-1 text-[10px] font-black">
+                          {selected.score}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
 
         <div className="print-break-avoid border border-black p-6 mb-10">
           <div className="flex justify-between items-center mb-4 border-b border-black pb-2">
             <p className="text-[10px] font-black uppercase tracking-widest">რისკის დონე: {getRiskLabel()}</p>
             <p className="text-[10px] font-black uppercase tracking-widest">ინტერვენცია: {getInterventionType()}</p>
           </div>
+          <div className="grid grid-cols-2 gap-3 mb-5">
+            <div className="border border-black px-3 py-2">
+              <p className="text-[8px] font-black uppercase tracking-widest mb-1">საბოლოო ქულა</p>
+              <p className="text-base font-black">{totalScore}</p>
+            </div>
+            <div className="border border-black px-3 py-2">
+              <p className="text-[8px] font-black uppercase tracking-widest mb-1">რისკის დონე</p>
+              <p className="text-[10px] font-black">{getRiskLabel()} რისკი</p>
+            </div>
+          </div>
           {isComplete ? (
             <div className="space-y-2">
               {MORSE_INTERVENTIONS[riskLevel].map((item, i) => (
-                <p key={i} className="text-[9px] leading-snug font-medium">• {item}</p>
+                <p key={i} className="text-[9px] leading-snug font-medium">• {cleanInterventionItem(item)}</p>
               ))}
             </div>
           ) : (
