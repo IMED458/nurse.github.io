@@ -219,52 +219,19 @@ const formatDisplayDate = (value: string) => {
   return parsed.toLocaleDateString('ka-GE');
 };
 
-const MORSE_SELECTION_LABELS: Record<string, Record<number, { screen: string; print: string }>> = {
-  falls: {
-    0: { screen: 'არა', print: 'არა' },
-    25: { screen: 'კი', print: 'კი' },
-  },
-  como: {
-    0: { screen: 'არა', print: 'არა' },
-    15: { screen: 'კი', print: 'კი' },
-  },
-  mob: {
-    0: { screen: 'დახმარება / წოლითი რეჟიმი', print: 'დახმარება / წოლითი' },
-    15: { screen: 'ხელჯოხი / ყავარჯენი', print: 'ხელჯოხი / ყავარჯენი' },
-    30: { screen: 'ავეჯს ეყრდნობა', print: 'ავეჯზე დაყრდნობით' },
-  },
-  iv: {
-    0: { screen: 'არა', print: 'არა' },
-    20: { screen: 'კი', print: 'კი' },
-  },
-  gait: {
-    0: { screen: 'ნორმალური', print: 'ნორმალური' },
-    10: { screen: 'სუსტი სიარული', print: 'სუსტი სიარული' },
-    20: { screen: 'მხარდაჭერით დადის', print: 'მხარდაჭერით დადის' },
-  },
-  mental: {
-    0: { screen: 'აცნობიერებს', print: 'აცნობიერებს' },
-    15: { screen: 'რისკს ვერ აფასებს', print: 'რისკს ვერ აფასებს' },
-  },
-};
-
 const getMorseSelectionMeta = (criterion: Criterion, value: number | null) => {
   const option = criterion.options.find((entry) => entry.value === value);
 
   if (value === null || !option) {
     return {
-      screen: 'აირჩიეთ პასუხი',
-      print: ' ',
+      label: '',
       full: '',
       score: '—',
     };
   }
 
-  const mapped = MORSE_SELECTION_LABELS[criterion.id]?.[value];
-
   return {
-    screen: mapped?.screen ?? option.label,
-    print: mapped?.print ?? mapped?.screen ?? option.label,
+    label: option.label,
     full: option.label,
     score: String(value),
   };
@@ -539,17 +506,19 @@ const MorseFallScale = ({ onBack }: { onBack: () => void }) => {
                       {String(cIdx + 1).padStart(2, '0')}
                     </div>
                     <div className="min-w-0 flex-1">
-                      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-                        <p className="text-sm font-black text-slate-900 leading-snug sm:max-w-[62%]">{criterion.label}</p>
-                        <div className="morse-leader hidden sm:block text-slate-200"></div>
-                        <div className="flex flex-wrap items-center gap-2 sm:ml-auto">
-                          <span className={`inline-flex items-center rounded-full border px-3 py-1.5 text-[10px] font-black tracking-wide ${
+                      <div className="flex flex-col gap-3 xl:flex-row xl:items-start">
+                        <div className="flex min-w-0 flex-1 items-start gap-2">
+                          <p className="text-sm font-black text-slate-900 leading-snug">{criterion.label}</p>
+                          <div className="morse-leader mt-3 hidden xl:block text-slate-200"></div>
+                        </div>
+                        <div className="flex items-start gap-2 xl:w-[24rem] xl:max-w-[24rem] xl:justify-end">
+                          <div className={`min-w-0 flex-1 rounded-2xl border px-4 py-3 text-[11px] font-semibold leading-snug ${
                             scores[criterion.id] !== null
                               ? 'border-slate-900 bg-slate-900 text-white'
                               : 'border-slate-200 bg-white text-slate-400'
                           }`}>
-                            {selected.screen}
-                          </span>
+                            {selected.label || 'აირჩიეთ პასუხი ქვემოთ'}
+                          </div>
                           <span className={`inline-flex min-w-[48px] items-center justify-center rounded-xl border px-3 py-1.5 text-[10px] font-black ${
                             scores[criterion.id] !== null
                               ? 'border-slate-900 bg-slate-50 text-slate-900'
@@ -698,8 +667,8 @@ const MorseFallScale = ({ onBack }: { onBack: () => void }) => {
           </div>
         </div>
 
-        <div className="print-break-avoid border border-black p-5 mb-8">
-          <div className="flex items-center gap-3 mb-5">
+        <div className="print-break-avoid mb-8">
+          <div className="flex items-center gap-3 mb-4 border-b border-black pb-2">
             <p className="text-[10px] font-black uppercase tracking-[0.18em]">შეფასების კრიტერიუმები</p>
             <div className="morse-leader text-black/60"></div>
           </div>
@@ -709,23 +678,19 @@ const MorseFallScale = ({ onBack }: { onBack: () => void }) => {
               const selected = getMorseSelectionMeta(criterion, scores[criterion.id]);
 
               return (
-                <div key={criterion.id} className="print-break-avoid rounded-lg border border-black px-3 py-3">
-                  <div className="flex items-start gap-3">
-                    <div className="flex h-6 w-6 items-center justify-center rounded-full border border-black text-[8px] font-black">
-                      {String(index + 1).padStart(2, '0')}
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center gap-2">
-                        <p className="text-[10px] font-semibold leading-snug">{criterion.label}</p>
-                        <div className="morse-leader text-black/60"></div>
-                        <span className="inline-flex min-w-[38mm] justify-center rounded-full border border-black px-3 py-1 text-[8px] font-black tracking-wider">
-                          {selected.print}
-                        </span>
-                        <span className="inline-flex w-[14mm] justify-center rounded-md border border-black px-2 py-1 text-[10px] font-black">
-                          {selected.score}
-                        </span>
-                      </div>
-                    </div>
+                <div key={criterion.id} className="print-break-avoid grid grid-cols-[8mm,minmax(0,1fr),58mm,14mm] gap-2 items-start">
+                  <div className="flex h-6 w-6 items-center justify-center rounded-full border border-black text-[8px] font-black">
+                    {String(index + 1).padStart(2, '0')}
+                  </div>
+                  <div className="flex items-center gap-2 pt-1">
+                    <p className="text-[10px] font-semibold leading-snug">{criterion.label}</p>
+                    <div className="morse-leader text-black/60"></div>
+                  </div>
+                  <div className="min-h-[12mm] rounded-md border border-black px-2 py-1.5 text-[8px] leading-[1.3] font-semibold">
+                    {selected.label || ' '}
+                  </div>
+                  <div className="flex min-h-[12mm] items-center justify-center rounded-md border border-black px-1 py-1 text-[10px] font-black">
+                    {selected.score}
                   </div>
                 </div>
               );
