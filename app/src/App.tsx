@@ -28,6 +28,26 @@ interface Criterion {
   options: { label: string; value: number }[];
 }
 
+interface PatientInfo {
+  name: string;
+  age: string;
+  id: string;
+  historyNum: string;
+  gender: string;
+  assessor: string;
+  date: string;
+}
+
+const createInitialPatientInfo = (): PatientInfo => ({
+  name: '',
+  age: '',
+  id: '',
+  historyNum: '',
+  gender: '',
+  assessor: '',
+  date: new Date().toISOString().split('T')[0],
+});
+
 // --- Constants (Morse Fall Scale) ---
 
 const MORSE_CRITERIA: Criterion[] = [
@@ -250,7 +270,17 @@ const ClinicLogo = ({ compact = false }: { compact?: boolean }) => (
   />
 );
 
-const Dashboard = ({ setView }: { setView: (v: View) => void }) => {
+const Dashboard = ({
+  setView,
+  patientInfo,
+  setPatientInfo,
+  onResetPatientInfo,
+}: {
+  setView: (v: View) => void;
+  patientInfo: PatientInfo;
+  setPatientInfo: React.Dispatch<React.SetStateAction<PatientInfo>>;
+  onResetPatientInfo: () => void;
+}) => {
   const documents = [
     { 
       id: 'morse' as View, 
@@ -285,6 +315,106 @@ const Dashboard = ({ setView }: { setView: (v: View) => void }) => {
         <p className="text-slate-400 font-bold text-sm uppercase tracking-widest">Nursing Documentation Portal</p>
       </div>
 
+      <div className="mb-10 rounded-[1.75rem] border border-slate-200 bg-white p-8 shadow-sm">
+        <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <div className="max-w-2xl text-left">
+            <p className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-400 mb-2">საერთო პაციენტის მონაცემები</p>
+            <h2 className="text-2xl font-black text-slate-900 tracking-tight mb-2">ერთხელ შეავსე და ყველა დოკუმენტში ავტომატურად გადაიტანება</h2>
+            <p className="text-sm font-medium leading-relaxed text-slate-500">
+              ეს ველები გაზიარდება მორზეს შკალაში, ბრადენის შკალაში და მომდევნო დოკუმენტებშიც, ამიტომ ექთანს ხელახლა შეყვანა აღარ დასჭირდება.
+            </p>
+          </div>
+          <button
+            onClick={onResetPatientInfo}
+            className="inline-flex items-center gap-2 self-start rounded-xl border border-slate-200 px-4 py-2 text-[11px] font-black uppercase tracking-widest text-slate-500 transition-all hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900"
+          >
+            <RotateCcw size={14} /> მონაცემების გასუფთავება
+          </button>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-12 gap-x-10 gap-y-8">
+          <div className="sm:col-span-8 group text-left">
+            <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 group-focus-within:text-slate-900 transition-colors">პაციენტის სახელი, გვარი</label>
+            <input
+              type="text"
+              value={patientInfo.name}
+              onChange={e => setPatientInfo({ ...patientInfo, name: e.target.value })}
+              className="w-full bg-transparent border-b border-slate-200 focus:border-slate-900 outline-none py-1.5 font-bold text-slate-800 transition-all placeholder:text-slate-200"
+              placeholder="შეიყვანეთ სახელი..."
+            />
+          </div>
+          <div className="sm:col-span-4 group text-left">
+            <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 group-focus-within:text-slate-900 transition-colors">ასაკი</label>
+            <div className="flex items-end gap-2 border-b border-slate-200 focus-within:border-slate-900 transition-all">
+              <input
+                type="text"
+                value={patientInfo.age}
+                onChange={e => setPatientInfo({ ...patientInfo, age: e.target.value })}
+                className="w-full bg-transparent outline-none py-1.5 font-bold text-slate-800"
+              />
+              <span className="pb-1.5 text-[10px] font-bold text-slate-300 uppercase">წელი</span>
+            </div>
+          </div>
+
+          <div className="sm:col-span-6 group text-left">
+            <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 group-focus-within:text-slate-900 transition-colors">პირადი ნომერი</label>
+            <input
+              type="text"
+              value={patientInfo.id}
+              onChange={e => setPatientInfo({ ...patientInfo, id: e.target.value })}
+              className="w-full bg-transparent border-b border-slate-200 focus:border-slate-900 outline-none py-1.5 font-bold text-slate-800 transition-all"
+            />
+          </div>
+          <div className="sm:col-span-6 group text-left">
+            <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 group-focus-within:text-slate-900 transition-colors">ისტორიის ნომერი</label>
+            <input
+              type="text"
+              value={patientInfo.historyNum}
+              onChange={e => setPatientInfo({ ...patientInfo, historyNum: e.target.value })}
+              className="w-full bg-transparent border-b border-slate-200 focus:border-slate-900 outline-none py-1.5 font-bold text-slate-800 transition-all"
+            />
+          </div>
+
+          <div className="sm:col-span-4 text-left">
+            <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">სქესი</label>
+            <div className="flex gap-2">
+              {['კაცი', 'ქალი'].map((gender) => (
+                <button
+                  key={gender}
+                  onClick={() => setPatientInfo({ ...patientInfo, gender })}
+                  className={`flex-1 py-1.5 rounded border font-bold text-[10px] uppercase tracking-wider transition-all ${
+                    patientInfo.gender === gender
+                      ? 'bg-slate-900 border-slate-900 text-white'
+                      : 'bg-white border-slate-200 text-slate-400 hover:border-slate-300'
+                  }`}
+                >
+                  {gender}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="sm:col-span-4 group text-left">
+            <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 group-focus-within:text-slate-900 transition-colors">შემფასებელი</label>
+            <input
+              type="text"
+              value={patientInfo.assessor}
+              onChange={e => setPatientInfo({ ...patientInfo, assessor: e.target.value })}
+              className="w-full bg-transparent border-b border-slate-200 focus:border-slate-900 outline-none py-1.5 font-bold text-slate-800 transition-all"
+            />
+          </div>
+          <div className="sm:col-span-4 group text-left">
+            <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 group-focus-within:text-slate-900 transition-colors">შეფასების თარიღი</label>
+            <input
+              type="date"
+              value={patientInfo.date}
+              onChange={e => setPatientInfo({ ...patientInfo, date: e.target.value })}
+              className="w-full bg-transparent border-b border-slate-200 focus:border-slate-900 outline-none py-1.5 font-bold text-slate-800 transition-all"
+            />
+          </div>
+        </div>
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {documents.map((doc) => (
           <button
@@ -314,20 +444,18 @@ const Dashboard = ({ setView }: { setView: (v: View) => void }) => {
   );
 };
 
-const MorseFallScale = ({ onBack }: { onBack: () => void }) => {
+const MorseFallScale = ({
+  onBack,
+  patientInfo,
+  setPatientInfo,
+}: {
+  onBack: () => void;
+  patientInfo: PatientInfo;
+  setPatientInfo: React.Dispatch<React.SetStateAction<PatientInfo>>;
+}) => {
   const [scores, setScores] = useState<Record<string, number | null>>(
     Object.fromEntries(MORSE_CRITERIA.map(c => [c.id, null]))
   );
-
-  const [patientInfo, setPatientInfo] = useState({
-    name: '',
-    age: '',
-    id: '',
-    historyNum: '',
-    gender: '',
-    assessor: '',
-    date: new Date().toISOString().split('T')[0]
-  });
 
   const totalScore = useMemo(() => {
     return Object.keys(scores).reduce((acc, key) => acc + (scores[key] || 0), 0);
@@ -367,15 +495,6 @@ const MorseFallScale = ({ onBack }: { onBack: () => void }) => {
 
   const handleReset = () => {
     setScores(Object.fromEntries(MORSE_CRITERIA.map(c => [c.id, null])));
-    setPatientInfo({
-      name: '',
-      age: '',
-      id: '',
-      historyNum: '',
-      gender: '',
-      assessor: '',
-      date: new Date().toISOString().split('T')[0]
-    });
   };
 
   return (
@@ -395,7 +514,7 @@ const MorseFallScale = ({ onBack }: { onBack: () => void }) => {
               onClick={handleReset} 
               className="flex items-center gap-2 px-3 py-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-50 rounded-md transition-all font-bold text-[10px] uppercase tracking-wider"
             >
-              <RotateCcw size={14} /> გასუფთავება
+              <RotateCcw size={14} /> ქულების გასუფთავება
             </button>
             <button 
               onClick={() => window.print()} 
@@ -752,20 +871,18 @@ const MorseFallScale = ({ onBack }: { onBack: () => void }) => {
   );
 };
 
-const BradenScale = ({ onBack }: { onBack: () => void }) => {
+const BradenScale = ({
+  onBack,
+  patientInfo,
+  setPatientInfo,
+}: {
+  onBack: () => void;
+  patientInfo: PatientInfo;
+  setPatientInfo: React.Dispatch<React.SetStateAction<PatientInfo>>;
+}) => {
   const [scores, setScores] = useState<Record<string, number | null>>(
     Object.fromEntries(BRADEN_CRITERIA.map(c => [c.id, null]))
   );
-
-  const [patientInfo, setPatientInfo] = useState({
-    name: '',
-    age: '',
-    id: '',
-    historyNum: '',
-    gender: '',
-    assessor: '',
-    date: new Date().toISOString().split('T')[0]
-  });
 
   const totalScore = useMemo(() => {
     return Object.keys(scores).reduce((acc, key) => acc + (scores[key] || 0), 0);
@@ -801,15 +918,6 @@ const BradenScale = ({ onBack }: { onBack: () => void }) => {
 
   const handleReset = () => {
     setScores(Object.fromEntries(BRADEN_CRITERIA.map(c => [c.id, null])));
-    setPatientInfo({
-      name: '',
-      age: '',
-      id: '',
-      historyNum: '',
-      gender: '',
-      assessor: '',
-      date: new Date().toISOString().split('T')[0]
-    });
   };
 
   return (
@@ -829,7 +937,7 @@ const BradenScale = ({ onBack }: { onBack: () => void }) => {
               onClick={handleReset} 
               className="flex items-center gap-2 px-3 py-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-50 rounded-md transition-all font-bold text-[10px] uppercase tracking-wider"
             >
-              <RotateCcw size={14} /> გასუფთავება
+              <RotateCcw size={14} /> ქულების გასუფთავება
             </button>
             <button 
               onClick={() => window.print()} 
@@ -1148,12 +1256,32 @@ const PlaceholderView = ({ title, onBack }: { title: string, onBack: () => void 
 
 export default function App() {
   const [currentView, setCurrentView] = useState<View>('dashboard');
+  const [patientInfo, setPatientInfo] = useState<PatientInfo>(createInitialPatientInfo);
 
   return (
     <div className="min-h-screen bg-slate-50 py-8 sm:py-12 px-4 font-sans print:bg-white print:py-0 print:px-0">
-      {currentView === 'dashboard' && <Dashboard setView={setCurrentView} />}
-      {currentView === 'morse' && <MorseFallScale onBack={() => setCurrentView('dashboard')} />}
-      {currentView === 'braden' && <BradenScale onBack={() => setCurrentView('dashboard')} />}
+      {currentView === 'dashboard' && (
+        <Dashboard
+          setView={setCurrentView}
+          patientInfo={patientInfo}
+          setPatientInfo={setPatientInfo}
+          onResetPatientInfo={() => setPatientInfo(createInitialPatientInfo())}
+        />
+      )}
+      {currentView === 'morse' && (
+        <MorseFallScale
+          onBack={() => setCurrentView('dashboard')}
+          patientInfo={patientInfo}
+          setPatientInfo={setPatientInfo}
+        />
+      )}
+      {currentView === 'braden' && (
+        <BradenScale
+          onBack={() => setCurrentView('dashboard')}
+          patientInfo={patientInfo}
+          setPatientInfo={setPatientInfo}
+        />
+      )}
       {currentView === 'handover' && <PlaceholderView title="ექთნის გადაბარების ჩექლისთი" onBack={() => setCurrentView('dashboard')} />}
     </div>
   );
