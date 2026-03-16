@@ -15,7 +15,7 @@ import {
   ArrowLeftRight,
   ArrowRight
 } from 'lucide-react';
-import clinicLogo from './assets/ingorokva-clinic-logo.svg';
+import clinicLogo from './assets/htmc-logo.png';
 
 // --- Types ---
 
