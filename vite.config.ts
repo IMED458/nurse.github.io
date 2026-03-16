@@ -4,7 +4,7 @@ import path from 'path';
 import {defineConfig} from 'vite';
 
 export default defineConfig(({command}) => ({
-  base: command === 'build' ? '/nurse/' : '/',
+  base: command === 'build' ? '/nurse.github.io/' : '/',
   plugins: [react(), tailwindcss()],
   resolve: {
     alias: {
