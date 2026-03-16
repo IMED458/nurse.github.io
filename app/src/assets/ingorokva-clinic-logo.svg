@@ -1,0 +1,40 @@
+<svg width="1400" height="360" viewBox="0 0 1400 360" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <title>ინგოროყვას საუნივერსიტეტო კლინიკა HM Center 2009</title>
+  <g fill="#14188E">
+    <text x="40" y="126" font-family="'Noto Sans Georgian', 'DejaVu Sans', sans-serif" font-size="76" font-weight="700" letter-spacing="-1.5">
+      ინგოროყვას
+    </text>
+    <text x="24" y="236" font-family="'Noto Sans Georgian', 'DejaVu Sans', sans-serif" font-size="76" font-weight="700" letter-spacing="-1.5">
+      საუნივერსიტეტო
+    </text>
+    <text x="424" y="330" font-family="'Noto Sans Georgian', 'DejaVu Sans', sans-serif" font-size="76" font-weight="700" letter-spacing="-1.5">
+      კლინიკა
+    </text>
+  </g>
+
+  <g stroke="#14188E" stroke-width="16" stroke-linejoin="round" fill="none">
+    <path d="M760 74H979V125H905V312H835V125H760V74Z" />
+    <path d="M760 196H906V248H760V196Z" />
+    <path d="M979 310V120H1050L1100 168L1150 120H1252V310H1182V196L1100 262L1018 196V310H979Z" />
+    <path d="M1252 310H1350" />
+  </g>
+
+  <g fill="#14188E">
+    <path d="M1188 94L1250 62V194L1188 222V94Z" />
+    <path d="M1258 74L1358 123V216L1258 174V74Z" />
+    <path d="M1274 97L1342 129" stroke="#FFFFFF" stroke-width="8" stroke-linecap="round" />
+    <path d="M1274 122L1342 154" stroke="#FFFFFF" stroke-width="8" stroke-linecap="round" />
+    <path d="M1274 147L1342 180" stroke="#FFFFFF" stroke-width="8" stroke-linecap="round" />
+    <path d="M1338 128L1390 102V182L1338 206V128Z" />
+    <path d="M1310 290C1310 273 1324 258 1342 258H1350V296H1310V290Z" />
+  </g>
+
+  <g fill="#14188E">
+    <text x="1272" y="272" font-family="'Arial Black', 'Montserrat', sans-serif" font-size="52" font-weight="900" text-anchor="middle">
+      2009
+    </text>
+    <text x="1166" y="329" font-family="'Arial Black', 'Montserrat', sans-serif" font-size="74" font-weight="900" letter-spacing="1.5">
+      CENTER
+    </text>
+  </g>
+</svg>

@@ -15,6 +15,7 @@ import {
   ArrowLeftRight,
   ArrowRight
 } from 'lucide-react';
+import clinicLogo from './assets/ingorokva-clinic-logo.svg';
 
 // --- Types ---
 
@@ -242,28 +243,11 @@ const cleanInterventionItem = (value: string) => value.replace(/^•\s*/, '');
 // --- Components ---
 
 const ClinicLogo = ({ compact = false }: { compact?: boolean }) => (
-  <div className={`clinic-logo ${compact ? 'clinic-logo--compact' : ''}`} aria-label="ინგოროყვას საუნივერსიტეტო კლინიკა">
-    <div className="clinic-logo__name">
-      <span>ინგოროყვას</span>
-      <span>საუნივერსიტეტო</span>
-      <span>კლინიკა</span>
-    </div>
-    <div className="clinic-logo__mark">
-      <div className="clinic-logo__wordmark">
-        <span className="clinic-logo__htmc">HTMC</span>
-        <div className="clinic-logo__building" aria-hidden="true">
-          <span></span>
-          <span></span>
-          <span></span>
-          <span></span>
-        </div>
-      </div>
-      <div className="clinic-logo__meta">
-        <span className="clinic-logo__year">2009</span>
-        <span className="clinic-logo__center">CENTER</span>
-      </div>
-    </div>
-  </div>
+  <img
+    src={clinicLogo}
+    alt="ინგოროყვას საუნივერსიტეტო კლინიკა HM Center"
+    className={`clinic-logo ${compact ? 'clinic-logo--compact' : 'clinic-logo--default'}`}
+  />
 );
 
 const Dashboard = ({ setView }: { setView: (v: View) => void }) => {
@@ -294,7 +278,7 @@ const Dashboard = ({ setView }: { setView: (v: View) => void }) => {
   return (
     <div className="max-w-4xl mx-auto py-12 px-6 screen-only">
       <div className="text-center mb-16">
-        <div className="flex justify-center mb-8">
+        <div className="flex justify-end mb-4">
           <ClinicLogo />
         </div>
         <h1 className="text-4xl font-black text-slate-900 uppercase tracking-tight mb-4">საექთნო დოკუმენტები</h1>
@@ -422,7 +406,7 @@ const MorseFallScale = ({ onBack }: { onBack: () => void }) => {
           </div>
         </div>
 
-        <div className="flex justify-center mb-6">
+        <div className="flex justify-end mb-4">
           <ClinicLogo compact />
         </div>
         
@@ -664,7 +648,7 @@ const MorseFallScale = ({ onBack }: { onBack: () => void }) => {
       {/* Print Version */}
       <div className="print-only bg-white text-black p-0 font-sans">
         <div className="print-break-avoid border border-black p-6 mb-8 text-center">
-          <div className="flex justify-center mb-5">
+          <div className="flex justify-end mb-3">
             <ClinicLogo compact />
           </div>
           <h1 className="text-xl font-black uppercase tracking-tight">დაცემის რისკის შეფასების მორზეს შკალა</h1>
@@ -856,7 +840,7 @@ const BradenScale = ({ onBack }: { onBack: () => void }) => {
           </div>
         </div>
 
-        <div className="flex justify-center mb-6">
+        <div className="flex justify-end mb-4">
           <ClinicLogo compact />
         </div>
         
@@ -1077,7 +1061,7 @@ const BradenScale = ({ onBack }: { onBack: () => void }) => {
       {/* Print Version */}
       <div className="print-only bg-white text-black p-0 font-sans">
         <div className="print-break-avoid border border-black p-6 mb-8 text-center">
-          <div className="flex justify-center mb-5">
+          <div className="flex justify-end mb-3">
             <ClinicLogo compact />
           </div>
           <h1 className="text-xl font-black uppercase tracking-tight">ბრადენის შკალა (Braden Scale)</h1>
@@ -1146,7 +1130,7 @@ const BradenScale = ({ onBack }: { onBack: () => void }) => {
 
 const PlaceholderView = ({ title, onBack }: { title: string, onBack: () => void }) => (
   <div className="max-w-2xl mx-auto py-20 px-6 text-center screen-only">
-    <div className="flex justify-center mb-8">
+    <div className="flex justify-end mb-4">
       <ClinicLogo compact />
     </div>
     <h2 className="text-2xl font-black text-slate-900 mb-4">{title}</h2>
