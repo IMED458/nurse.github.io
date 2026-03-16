@@ -775,78 +775,46 @@ const MorseFallScale = ({
           <p className="text-[8px] mt-2 font-semibold">განახლებულია 2024 წლის 28 მაისს</p>
         </div>
 
-        <div className="print-break-avoid grid grid-cols-2 gap-3 mb-8">
-          <div className="border border-black px-3 py-2">
-            <p className="text-[8px] font-black uppercase tracking-widest mb-1">პაციენტი</p>
-            <p className="text-[10px] font-semibold">{patientInfo.name || '________________'}</p>
-          </div>
-          <div className="border border-black px-3 py-2">
-            <p className="text-[8px] font-black uppercase tracking-widest mb-1">ასაკი</p>
-            <p className="text-[10px] font-semibold">{patientInfo.age || '____'} წელი</p>
-          </div>
-          <div className="border border-black px-3 py-2">
-            <p className="text-[8px] font-black uppercase tracking-widest mb-1">პირადი №</p>
-            <p className="text-[10px] font-semibold">{patientInfo.id || '________________'}</p>
-          </div>
-          <div className="border border-black px-3 py-2">
-            <p className="text-[8px] font-black uppercase tracking-widest mb-1">ისტორია №</p>
-            <p className="text-[10px] font-semibold">{patientInfo.historyNum || '________________'}</p>
-          </div>
-          <div className="border border-black px-3 py-2">
-            <p className="text-[8px] font-black uppercase tracking-widest mb-1">სქესი</p>
-            <p className="text-[10px] font-semibold">{patientInfo.gender || '____'}</p>
-          </div>
-          <div className="border border-black px-3 py-2">
-            <p className="text-[8px] font-black uppercase tracking-widest mb-1">თარიღი</p>
-            <p className="text-[10px] font-semibold">{formatDisplayDate(patientInfo.date)}</p>
-          </div>
+        <div className="print-break-avoid grid grid-cols-2 gap-x-12 gap-y-4 mb-10 text-[10px]">
+          <div className="border-b border-black pb-1 flex justify-between"><span>პაციენტი:</span> <span className="font-bold">{patientInfo.name || '________________'}</span></div>
+          <div className="border-b border-black pb-1 flex justify-between"><span>ასაკი:</span> <span className="font-bold">{patientInfo.age || '____'} წელი</span></div>
+          <div className="border-b border-black pb-1 flex justify-between"><span>პირადი №:</span> <span className="font-bold">{patientInfo.id || '________________'}</span></div>
+          <div className="border-b border-black pb-1 flex justify-between"><span>ისტორია №:</span> <span className="font-bold">{patientInfo.historyNum || '________________'}</span></div>
+          <div className="border-b border-black pb-1 flex justify-between"><span>სქესი:</span> <span className="font-bold">{patientInfo.gender || '____'}</span></div>
+          <div className="border-b border-black pb-1 flex justify-between"><span>თარიღი:</span> <span className="font-bold">{formatDisplayDate(patientInfo.date)}</span></div>
         </div>
 
-        <div className="print-break-avoid mb-8">
-          <div className="flex items-center gap-3 mb-4 border-b border-black pb-2">
-            <p className="text-[10px] font-black uppercase tracking-[0.18em]">შეფასების კრიტერიუმები</p>
-            <div className="morse-leader text-black/60"></div>
-          </div>
-
-          <div className="space-y-3">
-            {MORSE_CRITERIA.map((criterion, index) => {
+        <table className="w-full border-collapse border border-black text-[10px] mb-10">
+          <thead>
+            <tr className="print-break-avoid">
+              <th className="border border-black p-3 text-left uppercase tracking-widest">შეფასების კრიტერიუმი</th>
+              <th className="border border-black p-3 text-center w-20 uppercase tracking-widest">ქულა</th>
+            </tr>
+          </thead>
+          <tbody>
+            {MORSE_CRITERIA.map((criterion) => {
               const selected = getMorseSelectionMeta(criterion, scores[criterion.id]);
 
               return (
-                <div key={criterion.id} className="print-break-avoid grid grid-cols-[8mm,minmax(0,1fr),58mm,14mm] gap-2 items-start">
-                  <div className="flex h-6 w-6 items-center justify-center rounded-full border border-black text-[8px] font-black">
-                    {String(index + 1).padStart(2, '0')}
-                  </div>
-                  <div className="flex items-center gap-2 pt-1">
-                    <p className="text-[10px] font-semibold leading-snug">{criterion.label}</p>
-                    <div className="morse-leader text-black/60"></div>
-                  </div>
-                  <div className="min-h-[12mm] rounded-md border border-black px-2 py-1.5 text-[8px] leading-[1.3] font-semibold">
-                    {selected.label || ' '}
-                  </div>
-                  <div className="flex min-h-[12mm] items-center justify-center rounded-md border border-black px-1 py-1 text-[10px] font-black">
-                    {selected.score}
-                  </div>
-                </div>
+                <tr key={criterion.id} className="print-break-avoid">
+                  <td className="border border-black p-3">
+                    <p className="font-bold mb-1">{criterion.label}</p>
+                    <p className="text-[9px] italic font-medium">არჩეული: {selected.full || '—'}</p>
+                  </td>
+                  <td className="border border-black p-3 text-center font-bold text-sm">{selected.score}</td>
+                </tr>
               );
             })}
-          </div>
-        </div>
+            <tr className="font-black print-break-avoid">
+              <td className="border border-black p-3 text-right uppercase tracking-widest">საბოლოო ქულა:</td>
+              <td className="border border-black p-3 text-center text-base">{totalScore}</td>
+            </tr>
+          </tbody>
+        </table>
 
         <div className="print-break-avoid border border-black p-6 mb-10">
           <div className="flex justify-between items-center mb-4 border-b border-black pb-2">
             <p className="text-[10px] font-black uppercase tracking-widest">რისკის დონე: {getRiskLabel()}</p>
-            <p className="text-[10px] font-black uppercase tracking-widest">ინტერვენცია: {getInterventionType()}</p>
-          </div>
-          <div className="grid grid-cols-2 gap-3 mb-5">
-            <div className="border border-black px-3 py-2">
-              <p className="text-[8px] font-black uppercase tracking-widest mb-1">საბოლოო ქულა</p>
-              <p className="text-base font-black">{totalScore}</p>
-            </div>
-            <div className="border border-black px-3 py-2">
-              <p className="text-[8px] font-black uppercase tracking-widest mb-1">რისკის დონე</p>
-              <p className="text-[10px] font-black">{getRiskLabel()} რისკი</p>
-            </div>
           </div>
           {isComplete ? (
             <div className="space-y-2">
