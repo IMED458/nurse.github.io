@@ -319,7 +319,7 @@ const Dashboard = ({
         <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div className="max-w-2xl text-left">
             <p className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-400 mb-2">საერთო პაციენტის მონაცემები</p>
-            <h2 className="text-2xl font-black text-slate-900 tracking-tight mb-2">ერთხელ შეავსე და ყველა დოკუმენტში ავტომატურად გადაიტანება</h2>
+            <h2 className="text-2xl font-black text-slate-900 tracking-tight mb-2">პაციენტის მონაცემები</h2>
             <p className="text-sm font-medium leading-relaxed text-slate-500">
               ეს ველები გაზიარდება მორზეს შკალაში, ბრადენის შკალაში და მომდევნო დოკუმენტებშიც, ამიტომ ექთანს ხელახლა შეყვანა აღარ დასჭირდება.
             </p>
