@@ -13,6 +13,8 @@ npm install
 npm run dev
 ```
 
+Source files live in `app/`. The repository root is kept as the static GitHub Pages output so the site works even when Pages is configured to deploy directly from the main branch.
+
 ## Production build
 
 ```bash

@@ -5,10 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite --port=3000 --host=0.0.0.0",
-    "build": "vite build",
+    "build": "vite build && npm run sync-pages",
     "preview": "vite preview",
     "clean": "rm -rf dist",
-    "lint": "tsc --noEmit"
+    "lint": "tsc --noEmit",
+    "sync-pages": "rm -rf assets && cp -R dist/assets ./assets && cp dist/index.html ./index.html"
   },
   "dependencies": {
     "lucide-react": "^0.546.0",
