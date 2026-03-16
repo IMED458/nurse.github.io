@@ -20,11 +20,11 @@
 }
 
 .clinic-logo--default {
-  max-width: min(11rem, 40vw);
+  max-width: min(9rem, 34vw);
 }
 
 .clinic-logo--compact {
-  max-width: min(8.75rem, 32vw);
+  max-width: min(6.8rem, 28vw);
 }
 
 .morse-leader {
@@ -103,6 +103,6 @@
 
   .clinic-logo--default,
   .clinic-logo--compact {
-    max-width: 6.5rem !important;
+    max-width: 5.4rem !important;
   }
 }

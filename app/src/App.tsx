@@ -270,6 +270,33 @@ const ClinicLogo = ({ compact = false }: { compact?: boolean }) => (
   />
 );
 
+const DocumentTitleBlock = ({
+  title,
+  subtitle,
+  note,
+  print = false,
+}: {
+  title: string;
+  subtitle: string;
+  note?: string;
+  print?: boolean;
+}) => (
+  <div className={`mx-auto flex flex-col items-center ${print ? 'max-w-[27rem]' : 'max-w-[34rem]'}`}>
+    <ClinicLogo compact />
+    <h1 className={`${print ? 'mt-2 text-lg' : 'mt-3 text-xl sm:text-2xl'} font-black text-slate-900 uppercase tracking-tight`}>
+      {title}
+    </h1>
+    <p className={`${print ? 'mt-1 text-[11px]' : 'mt-1 text-xs'} font-bold uppercase tracking-widest text-slate-900`}>
+      {subtitle}
+    </p>
+    {note ? (
+      <p className={`${print ? 'mt-2 text-[8px]' : 'mt-2 text-[9px]'} font-semibold ${print ? 'text-slate-900' : 'text-slate-500'}`}>
+        {note}
+      </p>
+    ) : null}
+  </div>
+);
+
 const Dashboard = ({
   setView,
   patientInfo,
@@ -501,7 +528,7 @@ const MorseFallScale = ({
     <div className="print-sheet max-w-[210mm] mx-auto bg-white shadow-sm border border-slate-200 rounded-xl overflow-hidden print:max-w-none print:shadow-none print:border-0 print:rounded-none print:overflow-visible">
       <div className="screen-only">
         {/* Header Section */}
-        <div className="bg-white border-b border-slate-100 p-8 sm:p-10 text-center">
+        <div className="bg-white border-b border-slate-100 px-6 pt-6 pb-7 sm:px-8 sm:pt-8 sm:pb-8 text-center">
         <div className="flex justify-between items-start mb-6 no-print">
           <button 
             onClick={onBack}
@@ -525,15 +552,11 @@ const MorseFallScale = ({
           </div>
         </div>
 
-        <div className="flex justify-end mb-4">
-          <ClinicLogo compact />
-        </div>
-        
-        <h1 className="text-xl sm:text-2xl font-black text-slate-900 uppercase tracking-tight mb-2">დაცემის რისკის შეფასების მორზეს შკალა</h1>
-        <p className="text-slate-400 font-bold text-xs uppercase tracking-widest">Morse Fall Scale Assessment Tool</p>
-        <div className="mt-4 inline-block px-3 py-1 bg-slate-50 rounded-full border border-slate-100">
-          <p className="text-[9px] text-slate-500 font-bold uppercase tracking-widest">განახლებულია 2024 წლის 28 მაისს</p>
-        </div>
+        <DocumentTitleBlock
+          title="დაცემის რისკის შეფასების მორზეს შკალა"
+          subtitle="Morse Fall Scale Assessment Tool"
+          note="განახლებულია 2024 წლის 28 მაისს"
+        />
         </div>
 
         <div className="p-8 sm:p-12">
@@ -766,13 +789,13 @@ const MorseFallScale = ({
 
       {/* Print Version */}
       <div className="print-only bg-white text-black p-0 font-sans">
-        <div className="print-break-avoid border border-black p-6 mb-8 text-center">
-          <div className="flex justify-end mb-3">
-            <ClinicLogo compact />
-          </div>
-          <h1 className="text-xl font-black uppercase tracking-tight">დაცემის რისკის შეფასების მორზეს შკალა</h1>
-          <p className="text-xs font-bold uppercase tracking-widest mt-1">Morse Fall Scale Assessment Tool</p>
-          <p className="text-[8px] mt-2 font-semibold">განახლებულია 2024 წლის 28 მაისს</p>
+        <div className="print-break-avoid border border-black px-6 pt-4 pb-4 mb-6 text-center">
+          <DocumentTitleBlock
+            title="დაცემის რისკის შეფასების მორზეს შკალა"
+            subtitle="Morse Fall Scale Assessment Tool"
+            note="განახლებულია 2024 წლის 28 მაისს"
+            print
+          />
         </div>
 
         <div className="print-break-avoid grid grid-cols-2 gap-x-12 gap-y-4 mb-10 text-[10px]">
@@ -892,7 +915,7 @@ const BradenScale = ({
     <div className="print-sheet max-w-[210mm] mx-auto bg-white shadow-sm border border-slate-200 rounded-xl overflow-hidden print:max-w-none print:shadow-none print:border-0 print:rounded-none print:overflow-visible">
       <div className="screen-only">
         {/* Header Section */}
-        <div className="bg-white border-b border-slate-100 p-8 sm:p-10 text-center">
+        <div className="bg-white border-b border-slate-100 px-6 pt-6 pb-7 sm:px-8 sm:pt-8 sm:pb-8 text-center">
         <div className="flex justify-between items-start mb-6 no-print">
           <button 
             onClick={onBack}
@@ -916,15 +939,11 @@ const BradenScale = ({
           </div>
         </div>
 
-        <div className="flex justify-end mb-4">
-          <ClinicLogo compact />
-        </div>
-        
-        <h1 className="text-xl sm:text-2xl font-black text-slate-900 uppercase tracking-tight mb-2">ბრადენის შკალა (Braden Scale)</h1>
-        <p className="text-slate-400 font-bold text-xs uppercase tracking-widest">Pressure Ulcer Risk Assessment Tool</p>
-        <div className="mt-4 inline-block px-3 py-1 bg-slate-50 rounded-full border border-slate-100">
-          <p className="text-[9px] text-slate-500 font-bold uppercase tracking-widest">ნაწოლების განვითარების რისკის შეფასება</p>
-        </div>
+        <DocumentTitleBlock
+          title="ბრადენის შკალა (Braden Scale)"
+          subtitle="Pressure Ulcer Risk Assessment Tool"
+          note="ნაწოლების განვითარების რისკის შეფასება"
+        />
         </div>
 
         <div className="p-8 sm:p-12">
@@ -1136,12 +1155,13 @@ const BradenScale = ({
 
       {/* Print Version */}
       <div className="print-only bg-white text-black p-0 font-sans">
-        <div className="print-break-avoid border border-black p-6 mb-8 text-center">
-          <div className="flex justify-end mb-3">
-            <ClinicLogo compact />
-          </div>
-          <h1 className="text-xl font-black uppercase tracking-tight">ბრადენის შკალა (Braden Scale)</h1>
-          <p className="text-xs font-bold uppercase tracking-widest mt-1">Pressure Ulcer Risk Assessment Tool</p>
+        <div className="print-break-avoid border border-black px-6 pt-4 pb-4 mb-6 text-center">
+          <DocumentTitleBlock
+            title="ბრადენის შკალა (Braden Scale)"
+            subtitle="Pressure Ulcer Risk Assessment Tool"
+            note="ნაწოლების განვითარების რისკის შეფასება"
+            print
+          />
         </div>
 
         <div className="print-break-avoid grid grid-cols-2 gap-x-12 gap-y-4 mb-10 text-[10px]">
