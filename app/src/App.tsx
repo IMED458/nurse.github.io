@@ -13,14 +13,13 @@ import {
   ClipboardList,
   ShieldAlert,
   ArrowLeftRight,
-  ArrowRight,
-  Droplets
+  ArrowRight
 } from 'lucide-react';
 import clinicLogo from './assets/htmc-logo.png';
 
 // --- Types ---
 
-type View = 'dashboard' | 'morse' | 'braden' | 'handover' | 'abcdfwc' | 'nursingAssessment' | 'bloodRequest';
+type View = 'dashboard' | 'morse' | 'braden' | 'handover' | 'abcdfwc' | 'nursingAssessment';
 type RiskLevel = 'low' | 'medium' | 'high' | 'none';
 
 interface Criterion {
@@ -47,38 +46,6 @@ const createInitialPatientInfo = (): PatientInfo => ({
   gender: '',
   assessor: '',
   date: new Date().toISOString().split('T')[0],
-});
-
-interface BloodRequestFormState {
-  department: string;
-  time: string;
-  bloodGroup: string;
-  rhesus: string;
-  diagnosis: string;
-  transfusionIndication: string;
-  eritro: boolean;
-  eritroQty: string;
-  plasma: boolean;
-  plasmaQty: string;
-  trombo: boolean;
-  tromboQty: string;
-  doctor: string;
-}
-
-const createInitialBloodRequestFormState = (): BloodRequestFormState => ({
-  department: '',
-  time: '',
-  bloodGroup: '',
-  rhesus: '',
-  diagnosis: '',
-  transfusionIndication: '',
-  eritro: false,
-  eritroQty: '',
-  plasma: false,
-  plasmaQty: '',
-  trombo: false,
-  tromboQty: '',
-  doctor: '',
 });
 
 // --- Constants (Morse Fall Scale) ---
@@ -392,13 +359,6 @@ const Dashboard = ({
       description: 'პაციენტის სრული საექთნო შეფასების დეტალური ფორმა',
       icon: <ClipboardList className="text-violet-500" size={24} />,
       color: 'hover:border-violet-200 hover:bg-violet-50/30'
-    },
-    {
-      id: 'bloodRequest' as View,
-      title: 'მიმართვა სისხლის კომპონენტებზე',
-      description: 'სისხლის ბანკისა და კლინიკური ტრანსფუზიოლოგიის დეპარტამენტისთვის დასაბეჭდი ფორმა',
-      icon: <Droplets className="text-rose-500" size={24} />,
-      color: 'hover:border-rose-200 hover:bg-rose-50/30'
     }
   ];
 
@@ -2422,240 +2382,6 @@ const NursingAssessmentForm = ({
   );
 };
 
-const BloodComponentsRequestForm = ({
-  onBack,
-  patientInfo,
-  setPatientInfo,
-}: {
-  onBack: () => void;
-  patientInfo: PatientInfo;
-  setPatientInfo: React.Dispatch<React.SetStateAction<PatientInfo>>;
-}) => {
-  const [formState, setFormState] = useState<BloodRequestFormState>(createInitialBloodRequestFormState);
-  const sharedDate = getSharedDateValue(patientInfo.date);
-
-  const updateField = <K extends keyof BloodRequestFormState>(key: K, value: BloodRequestFormState[K]) => {
-    setFormState((prev) => ({ ...prev, [key]: value }));
-  };
-
-  const handleClear = () => {
-    setFormState(createInitialBloodRequestFormState());
-    setPatientInfo((prev) => ({
-      ...prev,
-      name: '',
-      historyNum: '',
-      date: createInitialPatientInfo().date,
-    }));
-  };
-
-  return (
-    <div className="print-sheet max-w-[210mm] mx-auto bg-white shadow-sm border border-slate-200 rounded-xl overflow-hidden print:max-w-none print:shadow-none print:border-0 print:rounded-none print:overflow-visible">
-      <div className="blood-request-shell">
-        <div className="blood-request-toolbar no-print">
-          <button
-            onClick={onBack}
-            className="inline-flex items-center gap-2 px-3 py-1.5 text-slate-400 hover:text-slate-900 hover:bg-slate-50 rounded-md transition-all font-bold text-[10px] uppercase tracking-wider"
-          >
-            <ChevronLeft size={14} /> უკან დაბრუნება
-          </button>
-
-          <div className="flex items-center gap-3">
-            <button
-              onClick={handleClear}
-              className="inline-flex items-center gap-2 px-3 py-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-50 rounded-md transition-all font-bold text-[10px] uppercase tracking-wider"
-            >
-              <RotateCcw size={14} /> ფორმის გასუფთავება
-            </button>
-            <button
-              onClick={() => window.print()}
-              className="inline-flex items-center gap-2 bg-slate-900 text-white px-4 py-1.5 rounded-md font-bold text-[10px] uppercase tracking-widest hover:bg-slate-800 transition-all shadow-sm active:scale-95"
-            >
-              <Printer size={14} /> ბეჭდვა
-            </button>
-          </div>
-        </div>
-
-        <div className="blood-request-page">
-          <div className="page">
-            <div className="blood-request-form-card">
-              <div className="blood-request-header">
-                <div className="blood-request-logo-wrap">
-                  <ClinicLogo compact />
-                </div>
-                <div className="blood-request-org-name-ka">შპს მაღალი სამედიცინო ტექნოლოგიების ცენტრი საუნივერსიტეტო კლინიკა</div>
-                <div className="blood-request-org-name-en">High Technology Medical Center University Clinic Ltd</div>
-                <div className="blood-request-org-dept">სისხლის ბანკი და კლინიკური ტრანსფუზიოლოგიის დეპარტამენტი</div>
-              </div>
-
-              <hr className="blood-request-divider" />
-
-              <div className="blood-request-title">მიმართვა სისხლის კომპონენტებზე</div>
-
-              <div className="blood-request-field-row">
-                <span className="blood-request-field-label">განყოფილება:</span>
-                <input
-                  className="blood-request-field-line"
-                  style={{ flex: 2 }}
-                  type="text"
-                  value={formState.department}
-                  onChange={(e) => updateField('department', e.target.value)}
-                />
-                <span className="blood-request-field-label">ისტორიის</span>
-                <input
-                  className="blood-request-field-line"
-                  style={{ flex: 1 }}
-                  type="text"
-                  value={patientInfo.historyNum}
-                  onChange={(e) => setPatientInfo((prev) => ({ ...prev, historyNum: e.target.value }))}
-                />
-                <span className="blood-request-field-label">დრო:</span>
-                <input
-                  className="blood-request-field-line"
-                  style={{ flex: 1 }}
-                  type="text"
-                  value={formState.time}
-                  onChange={(e) => updateField('time', e.target.value)}
-                />
-              </div>
-
-              <div className="blood-request-field-row">
-                <span className="blood-request-field-label">პაციენტის გვარი სახელი:</span>
-                <input
-                  className="blood-request-field-line"
-                  type="text"
-                  value={patientInfo.name}
-                  onChange={(e) => setPatientInfo((prev) => ({ ...prev, name: e.target.value }))}
-                />
-              </div>
-
-              <div className="blood-request-field-row blood-request-field-row--stack-sm">
-                <span className="blood-request-field-label">პაციენტის ჯგუფი და რეზუს ფაქტორი:</span>
-                <select
-                  className="blood-request-select"
-                  value={formState.bloodGroup}
-                  onChange={(e) => updateField('bloodGroup', e.target.value)}
-                >
-                  <option value="">-- ჯგუფი --</option>
-                  <option value="I (O)">I (O)</option>
-                  <option value="II (A)">II (A)</option>
-                  <option value="III (B)">III (B)</option>
-                  <option value="IV (AB)">IV (AB)</option>
-                </select>
-                <select
-                  className="blood-request-select"
-                  value={formState.rhesus}
-                  onChange={(e) => updateField('rhesus', e.target.value)}
-                >
-                  <option value="">-- რეზუს --</option>
-                  <option value="Rh+ (დადებითი)">Rh+ (დადებითი)</option>
-                  <option value="Rh− (უარყოფითი)">Rh− (უარყოფითი)</option>
-                </select>
-              </div>
-
-              <div className="blood-request-field-row">
-                <span className="blood-request-field-label">დიაგნოზი:</span>
-                <input
-                  className="blood-request-field-line"
-                  type="text"
-                  value={formState.diagnosis}
-                  onChange={(e) => updateField('diagnosis', e.target.value)}
-                />
-              </div>
-
-              <div className="blood-request-field-row">
-                <span className="blood-request-field-label">ტრანსფუზიის ჩვენება:</span>
-                <input
-                  className="blood-request-field-line"
-                  type="text"
-                  value={formState.transfusionIndication}
-                  onChange={(e) => updateField('transfusionIndication', e.target.value)}
-                />
-              </div>
-
-              <div className="blood-request-transfusion-section">
-                <div className="blood-request-checkbox-item">
-                  <input
-                    type="checkbox"
-                    id="eritro"
-                    checked={formState.eritro}
-                    onChange={(e) => updateField('eritro', e.target.checked)}
-                  />
-                  <label className="blood-request-checkbox-text" htmlFor="eritro">ერითროციტული მასა: რაოდენობა</label>
-                  <input
-                    className="blood-request-field-line"
-                    style={{ flex: 1 }}
-                    type="text"
-                    value={formState.eritroQty}
-                    onChange={(e) => updateField('eritroQty', e.target.value)}
-                    disabled={!formState.eritro}
-                  />
-                </div>
-
-                <div className="blood-request-checkbox-item">
-                  <input
-                    type="checkbox"
-                    id="plasma"
-                    checked={formState.plasma}
-                    onChange={(e) => updateField('plasma', e.target.checked)}
-                  />
-                  <label className="blood-request-checkbox-text" htmlFor="plasma">ახლად გაყინული პლაზმა: რაოდენობა</label>
-                  <input
-                    className="blood-request-field-line"
-                    style={{ flex: 1 }}
-                    type="text"
-                    value={formState.plasmaQty}
-                    onChange={(e) => updateField('plasmaQty', e.target.value)}
-                    disabled={!formState.plasma}
-                  />
-                </div>
-
-                <div className="blood-request-checkbox-item">
-                  <input
-                    type="checkbox"
-                    id="trombo"
-                    checked={formState.trombo}
-                    onChange={(e) => updateField('trombo', e.target.checked)}
-                  />
-                  <label className="blood-request-checkbox-text" htmlFor="trombo">თრომბოკონცენტრატი: რაოდენობა</label>
-                  <input
-                    className="blood-request-field-line"
-                    style={{ flex: 1 }}
-                    type="text"
-                    value={formState.tromboQty}
-                    onChange={(e) => updateField('tromboQty', e.target.value)}
-                    disabled={!formState.trombo}
-                  />
-                </div>
-              </div>
-
-              <div className="blood-request-bottom-row">
-                <div className="blood-request-bottom-field">
-                  <span className="blood-request-field-label">თარიღი:</span>
-                  <input
-                    className="blood-request-field-line"
-                    type="date"
-                    value={sharedDate}
-                    onChange={(e) => setPatientInfo((prev) => ({ ...prev, date: e.target.value }))}
-                  />
-                </div>
-                <div className="blood-request-bottom-field">
-                  <span className="blood-request-field-label">ექიმი:</span>
-                  <input
-                    className="blood-request-field-line"
-                    type="text"
-                    value={formState.doctor}
-                    onChange={(e) => updateField('doctor', e.target.value)}
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
 export default function App() {
   const [currentView, setCurrentView] = useState<View>('dashboard');
   const [patientInfo, setPatientInfo] = useState<PatientInfo>(createInitialPatientInfo);
@@ -2700,13 +2426,6 @@ export default function App() {
       )}
       {currentView === 'nursingAssessment' && (
         <NursingAssessmentForm
-          onBack={() => setCurrentView('dashboard')}
-          patientInfo={patientInfo}
-          setPatientInfo={setPatientInfo}
-        />
-      )}
-      {currentView === 'bloodRequest' && (
-        <BloodComponentsRequestForm
           onBack={() => setCurrentView('dashboard')}
           patientInfo={patientInfo}
           setPatientInfo={setPatientInfo}

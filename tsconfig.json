@@ -13,10 +13,6 @@
     "moduleResolution": "bundler",
     "isolatedModules": true,
     "moduleDetection": "force",
-    "types": [
-      "vite/client",
-      "node"
-    ],
     "allowJs": true,
     "jsx": "react-jsx",
     "paths": {
